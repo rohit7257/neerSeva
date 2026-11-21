@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="hi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>नल जल योजना प्रबंधन प्रणाली | Nal Jal Yojana Portal</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Hind', 'sans-serif'],
+          },
+          colors: {
+            jal: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49',
+            },
+            saffron: '#ff9933',
+            tirangaGreen: '#138808'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .hero-bg {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background: #082f49;
+    }
+    /* Hero slideshow: keep image1.png and image2.png beside this HTML file */
+    .hero-bg::before,
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      will-change: opacity;
+    }
+    .hero-bg::before {
+      background-image: linear-gradient(100deg, rgba(8, 35, 52, .78), rgba(3, 105, 161, .22)), url("image1.png");
+      animation: heroImageOne 12s infinite;
+    }
+    .hero-bg::after {
+      background-image: linear-gradient(100deg, rgba(8, 35, 52, .78), rgba(3, 105, 161, .22)), url("image2.png");
+      animation: heroImageTwo 12s infinite;
+    }
+    @keyframes heroImageOne {
+      0%, 45% { opacity: 1; }
+      50%, 95% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes heroImageTwo {
+      0%, 45% { opacity: 0; }
+      50%, 95% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @media (max-width: 768px) {
+      .hero-bg::before, .hero-bg::after { background-position: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg::before, .hero-bg::after { animation: none; }
+      .hero-bg::after { opacity: 0; }
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  
+    /* Grievance popup: stable header with a smooth, independently scrollable form */
+    #grievanceModal { scroll-behavior: smooth; }
+    #grievanceModal > div { overscroll-behavior: contain; }
+    #grievanceForm { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    #grievanceForm input, #grievanceForm select, #grievanceForm textarea, #grievanceForm button { scroll-margin-block: 1rem; }
+    #grievanceForm input:focus, #grievanceForm select:focus, #grievanceForm textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(245, 158, 11, .18); border-color: #f59e0b; }
+    @media (max-width: 640px) {
+      #grievanceModal { padding: .5rem; }
+      #grievanceModal > div { max-height: calc(100dvh - 1rem); border-radius: 1.25rem; }
+    }
+</style>
+
+  <style>
+    .auth-overlay { overscroll-behavior: contain; }
+    .auth-dialog { min-height: 0; }
+    .auth-modal-body { min-height: 0; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #0284c7 #e2e8f0; }
+    .auth-modal-body::-webkit-scrollbar { width: 10px; }
+    .auth-modal-body::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 8px; }
+    .auth-modal-body::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 8px; border: 2px solid #e2e8f0; }
+    @media (max-width: 640px) { .auth-dialog { width: 100%; max-height: 96dvh; } }
+  </style>
+
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-jal-500 selection:text-white">
+
+  <!-- TOP GOV BAR -->
+  <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-3">
+        <!-- <span class="inline-flex items-center gap-1 font-medium"><i class="fa-solid fa-flag text-saffron"></i> जल शक्ति मंत्रालय / Ministry of Jal Shakti</span> -->
+        <span class="text-slate-600">|</span>
+        <!-- <span class="hidden sm:inline">राष्ट्रीय ग्रामीण पेयजल मिशन</span> -->
+      </div>
+      <div class="flex items-center space-x-4 text-xs">
+        <button onclick="toggleLang()" id="langBtn" class="hover:text-white transition px-2 py-0.5 rounded bg-slate-800 border border-slate-700">हिन्दी / A</button>
+        <span class="text-slate-400"><i class="fa-solid fa-phone text-emerald-400 mr-1"></i> टोल फ्री: 1800-180-1555</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo Branding -->
+      <a href="#" onclick="showSection('home')" class="flex items-center gap-3 group">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-jal-700 to-jal-500 flex items-center justify-center text-white shadow-md shadow-jal-500/20 group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-faucet-drip text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-xl sm:text-2xl text-jal-900 tracking-tight">नल जल योजना</span>
+            <!-- <span class="bg-saffron/15 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-orange-200">पोर्टल</span> -->
+          </div>
+          <p class="text-xs  text-slate-500 font-medium ">Har Ghar Nal Se Jal Management System</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav & Auth Controls -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <button onclick="showSection('home')" class="nav-link font-medium text-slate-700 hover:text-jal-600 transition">होम / Home</button>
+        <button onclick="scrollToFeatures()" class="nav-link font-medium text-slate-700 hover:text-jal-600 transition">सुविधाएं / Features</button>
+        <button onclick="openComplaintTrackingModal()" class="nav-link font-medium text-slate-700 hover:text-jal-600 transition">शिकायत स्थिति / Track</button>
+        <button onclick="showHelpModal()" class="nav-link font-medium text-slate-700 hover:text-jal-600 transition">सहायता / Helpline</button>
+        
+        <div id="authNavButtons" class="flex items-center space-x-3 ml-4">
+          <button onclick="openAuthModal('citizen', 'login')" class="px-4 py-2 text-sm font-semibold text-jal-700 bg-jal-50 hover:bg-jal-100 rounded-lg transition border border-jal-200">
+            नागरिक लॉगिन
+          </button>
+          
+        </div>
+
+        <div id="userProfilePill" class="hidden items-center space-x-3 pl-4 border-l border-slate-200">
+          <div class="text-right">
+            <div id="navUserName" class="text-sm font-bold text-slate-900 leading-tight">राम कुमार</div>
+            <div id="navUserRole" class="text-[11px] font-medium text-jal-600 capitalize">नागरिक (वार्ड नं. 4)</div>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-jal-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="navAvatarInitials">
+            RK
+          </div>
+          <button onclick="logout()" title="Logout" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <div class="md:hidden flex items-center space-x-2">
+        <button onclick="toggleMobileMenu()" class="p-2.5 rounded-lg text-slate-600 hover:bg-slate-100">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3">
+      <button onclick="showSection('home'); toggleMobileMenu()" class="block w-full text-left font-medium py-2 text-slate-700">होम (Home)</button>
+      <button onclick="scrollToFeatures(); toggleMobileMenu()" class="block w-full text-left font-medium py-2 text-slate-700">सुविधाएं (Features)</button>
+      <button onclick="openComplaintTrackingModal(); toggleMobileMenu()" class="block w-full text-left font-medium py-2 text-slate-700">शिकायत स्थिति (Track Grievance)</button>
+      <div id="mobileAuthBlock" class="pt-2 border-t border-slate-100 flex flex-col gap-2">
+        <button onclick="openAuthModal('citizen', 'login'); toggleMobileMenu()" class="w-full py-2.5 text-center font-semibold text-jal-700 bg-jal-50 rounded-lg">नागरिक लॉगिन / पंजीकरण</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SMS SIMULATOR FLOATING NOTIFICATION (FOR OTP) -->
+  <div id="smsNotification" class="fixed top-24 right-4 z-50 max-w-sm w-full bg-slate-900/95 text-white p-4 rounded-xl shadow-2xl border border-jal-400 transform transition-all duration-300 translate-y-[-150%] opacity-0 pointer-events-none">
+    <div class="flex items-start gap-3">
+      <div class="w-9 h-9 rounded-full bg-jal-500 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-comment-sms text-lg"></i>
+      </div>
+      <div class="flex-1">
+        <div class="flex justify-between items-center text-xs text-jal-200 mb-0.5">
+          <span class="font-bold tracking-wider">SMS • GOV-NALJAL</span>
+          <span id="smsTime">Just now</span>
+        </div>
+        <p class="text-xs text-slate-200 leading-relaxed font-sans" id="smsBody">
+          नल जल योजना सत्यापन OTP कोड <span class="font-mono font-bold text-amber-300 text-sm">482910</span> है। यह 10 मिनट के लिए मान्य है। किसी से साझा न करें।
+        </p>
+        <div class="mt-2 flex gap-2">
+          <button onclick="autoFillCurrentOtp()" class="px-2.5 py-1 text-[11px] font-bold bg-amber-400 hover:bg-amber-300 text-slate-900 rounded-md transition shadow">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> OTP स्वतः भरें (Auto-Fill)
+          </button>
+          <button onclick="copyCurrentOtp()" class="px-2 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md border border-slate-700">
+            <i class="fa-regular fa-copy mr-1"></i> कॉपी करें
+          </button>
+        </div>
+      </div>
+      <button onclick="closeSmsAlert()" class="text-slate-400 hover:text-white text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1">
+
+    <!-- ============================================== -->
+    <!-- SECTION 1: PUBLIC HOME / LANDING PAGE -->
+    <!-- ============================================== -->
+    <div id="sectionHome" class="space-y-16">
+      
+      <!-- HERO -->
+      <section class="hero-bg relative min-h-[580px] lg:min-h-[640px] flex items-center text-white px-4 sm:px-6 lg:px-8 py-16">
+        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-10 items-center">
+          
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              स्वच्छ जल, समृद्ध ग्राम – हर घर नल से जल मिशन
+            </div>
+            
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+              हर ग्रामीण परिवार को <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-teal-200 to-cyan-300">शुद्ध पेयजल</span> की सुविधा
+            </h1>
+            
+            <p class="text-slate-200 text-base sm:text-lg max-w-2xl leading-relaxed font-normal">
+              नल जल योजना के अंतर्गत नए जल कनेक्शन के लिए ऑनलाइन आवेदन करें, पानी की आपूर्ति की स्थिति देखें तथा पाइपलाइन लीकेज या गंदे पानी की शिकायत तुरंत दर्ज करें।
+            </p>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap gap-4 pt-2">
+              <button onclick="handleHeroNewConnectionClick()" class="px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg shadow-teal-900/40 transition transform active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-circle-plus"></i> नया कनेक्शन आवेदन
+              </button>
+              <button onclick="handleHeroGrievanceClick()" class="px-6 py-3.5 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-bold rounded-xl border border-white/30 transition transform active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-300"></i> शिकायत दर्ज करें
+              </button>
+            </div>
+
+            <!-- Quick stats bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/15">
+              <div>
+                <p class="text-2xl sm:text-3xl font-black text-sky-300">10lac+</p>
+                <p class="text-xs text-slate-300">नल कनेक्शन पूर्ण</p>
+              </div>
+              <div>
+                <p class="text-2xl sm:text-3xl font-black text-emerald-400">98.4%</p>
+                <p class="text-xs text-slate-300">शिकायत समाधान दर</p>
+              </div>
+              <div>
+                <p class="text-2xl sm:text-3xl font-black text-amber-300">2,140+</p>
+                <p class="text-xs text-slate-300">पंचायतें आच्छादित</p>
+              </div>
+              <div>
+                <p class="text-2xl sm:text-3xl font-black text-purple-300">24x7</p>
+                <p class="text-xs text-slate-300">डिजिटल निगरानी</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Quick Access Action Box on Hero -->
+          <div class="lg:col-span-5">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 text-slate-800 shadow-2xl relative overflow-hidden border border-white/40">
+              <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-jal-500/10 rounded-full blur-2xl"></div>
+              
+              <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+                <div>
+                  <h3 class="text-xl font-bold text-jal-900">नागरिक त्वरित सहायता</h3>
+                  <p class="text-xs text-slate-500">Quick Citizen Self-Service Services</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-jal-100 text-jal-700 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-hands-holding-circle text-lg"></i>
+                </div>
+              </div>
+
+              <!-- Quick services buttons -->
+              <div class="space-y-3">
+                <button onclick="handleHeroNewConnectionClick()" class="w-full p-3.5 bg-slate-50 hover:bg-jal-50/80 rounded-xl border border-slate-200 hover:border-jal-300 transition text-left flex items-center justify-between group">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-sky-100 text-jal-600 flex items-center justify-center font-bold group-hover:scale-105 transition">
+                      <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-sm text-slate-800">नया घरेलू नल कनेक्शन</div>
+                      <div class="text-xs text-slate-500">Apply for Pipe Water Connection</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-jal-600"></i>
+                </button>
+
+                <button onclick="handleHeroGrievanceClick()" class="w-full p-3.5 bg-slate-50 hover:bg-amber-50/80 rounded-xl border border-slate-200 hover:border-amber-300 transition text-left flex items-center justify-between group">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold group-hover:scale-105 transition">
+                      <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-sm text-slate-800">पाइप लीकेज या जलापूर्ति शिकायत</div>
+                      <div class="text-xs text-slate-500">Register Supply / Contamination Issue</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-amber-600"></i>
+                </button>
+
+                <button onclick="openComplaintTrackingModal()" class="w-full p-3.5 bg-slate-50 hover:bg-emerald-50/80 rounded-xl border border-slate-200 hover:border-emerald-300 transition text-left flex items-center justify-between group">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold group-hover:scale-105 transition">
+                      <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-sm text-slate-800">शिकायत / आवेदन ट्रैक करें</div>
+                      <div class="text-xs text-slate-500">Track Status by Ticket Number</div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-emerald-600"></i>
+                </button>
+              </div>
+
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- KEY FEATURES SECTION -->
+      <section id="featuresSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-jal-600 font-bold text-sm tracking-wider uppercase bg-jal-50 px-3 py-1 roun
+          ded-full border border-jal-100">पोर्टल सुविधाएं</span>
+          <h2 class="text-3xl font-extrabold text-slate-900 mt-2">पारदर्शी एवं जवाबदेह नल जल प्रबंधन</h2>
+          <p class="text-slate-500 text-sm mt-2">ग्रामीण क्षेत्रों में हर घर तक शुद्ध पेयजल आपूर्ति की रियल-टाइम निगरानी और समाधान प्रणाली।</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+            <div class="w-14 h-14 rounded-2xl bg-sky-50 text-jal-600 flex items-center justify-center text-2xl mb-5">
+              <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">सरल नागरिक पंजीकरण व OTP सुरक्षा</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              ग्राम पंचायत, वार्ड संख्या व मोबाइल नंबर से त्वरित खाता निर्माण। पासवर्ड भूलने पर सुरक्षित मोबाइल OTP सत्यापन द्वारा पासवर्ड रीसेट की सुविधा।
+            </p>
+          </div>
+
+          <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-5">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">शिकायत निवारण (Grievance Redressal)</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              पाइपलाइन लीकेज, लो प्रेशर या गंदे पानी की फोटो सहित शिकायत दर्ज करें। जल मित्र (टेक्नीशियन) असाइनमेंट और लाइव स्टेटस प्रोग्रेस ट्रैकर।
+            </p>
+          </div>
+
+          <div class="bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-5">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">एडमिन डैशबोर्ड एवं जलापूर्ति मॉनिटरिंग</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              अधिकारियों हेतु पंचायत स्तर का लाइव एनालिटिक्स, जल टंकी स्तर, टीडीएस (TDS) क्लोरीनेशन गुणवत्ता सूचकांक और ऑनलाइन आवेदन अप्रूवल डेस्क।
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE WATER SCHEDULE & ANNOUNCEMENT BANNER -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-r from-jal-900 via-jal-800 to-slate-900 rounded-3xl text-white p-8 sm:p-10 shadow-xl overflow-hidden relative">
+          <div class="relative z-10 grid lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-8 space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-semibold border border-amber-400/30">
+                <i class="fa-solid fa-bullhorn"></i> दैनिक जलापूर्ति समय-सारणी सूचना
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold leading-tight">
+                सभी ग्राम पंचायतों में सुबह 06:00 से 08:30 एवं शाम 05:00 से 07:00 तक आपूर्ति जारी
+              </h3>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                जल शोधन संयंत्र में नियमित क्लोरीनीकरण पूर्ण कर लिया गया है। पानी को व्यर्थ न बहने दें और टोटियों को बंद रखें। किसी भी रिसाव की तुरंत सूचना पोर्टल पर दें।
+              </p>
+            </div>
+            <div class="lg:col-span-4 flex justify-lg-end">
+              <div class="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl w-full text-center">
+                <div class="text-xs text-sky-200 uppercase font-semibold mb-1">आपातकालीन जल मित्र हेल्पलाइन</div>
+                <div class="text-2xl font-black text-white tracking-wider mb-2">1800-200-4499</div>
+                <div class="text-xs text-emerald-300 flex items-center justify-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 24 घंटे नियंत्रण कक्ष सक्रिय
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- SECTION 2: CITIZEN PORTAL (DASHBOARD) -->
+    <!-- ============================================== -->
+    <div id="sectionCitizen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Citizen Header Profile -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-jal-600 to-sky-400 text-white flex items-center justify-center text-2xl font-bold shadow-md">
+            <span id="citizenAvatarBig">RK</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-bold text-slate-900" id="citizenNameDisp">राम कुमार</h2>
+              <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">सत्यापित उपभोक्ता</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-0.5">
+              ग्राम पंचायत: <span class="font-semibold text-slate-700" id="citizenPanchayatDisp">रामपुर</span> | वार्ड नं: <span class="font-semibold text-slate-700" id="citizenWardDisp">04</span> | उपभोक्ता ID: <span class="font-mono text-jal-600 font-bold" id="citizenIdDisp">NJ-2024-8841</span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <button onclick="openNewConnectionModal()" class="px-4 py-2.5 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle"></i> नया नल कनेक्शन आवेदन
+          </button>
+          <button onclick="openComplaintModal()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
+            <i class="fa-solid fa-wrench"></i> समस्या दर्ज करें
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics for Citizen -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center text-slate-500 text-xs font-semibold">
+            <span>सक्रिय कनेक्शन</span>
+            <i class="fa-solid fa-faucet text-jal-600 text-base"></i>
+          </div>
+          <div class="text-2xl font-black text-slate-900 mt-2" id="citizenActiveConns">1 कनेक्शन</div>
+          <div class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-circle-check"></i> आपूर्ति सामान्य (Regular)</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center text-slate-500 text-xs font-semibold">
+            <span>मेरी दर्ज शिकायतें</span>
+            <i class="fa-solid fa-clipboard-list text-amber-500 text-base"></i>
+          </div>
+          <div class="text-2xl font-black text-slate-900 mt-2" id="citizenGrievanceCount">2 कुल</div>
+          <div class="text-xs text-amber-600 font-medium mt-1" id="citizenPendingCount">1 समाधान प्रक्रिया में</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center text-slate-500 text-xs font-semibold">
+            <span>जल शुल्क बकाया (Bill)</span>
+            <i class="fa-solid fa-receipt text-indigo-500 text-base"></i>
+          </div>
+          <div class="text-2xl font-black text-slate-900 mt-2">₹ 50.00</div>
+          <button onclick="payWaterBillModal()" class="text-xs text-jal-600 font-bold hover:underline mt-1 flex items-center gap-1">
+            ऑनलाइन भुगतान करें <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center text-slate-500 text-xs font-semibold">
+            <span>आगामी जल आपूर्ति</span>
+            <i class="fa-regular fa-clock text-sky-500 text-base"></i>
+          </div>
+          <div class="text-2xl font-black text-sky-700 mt-2">आज शाम 05:00</div>
+          <div class="text-xs text-slate-500 font-medium mt-1">अवधि: 2 घंटे 30 मिनट</div>
+        </div>
+      </div>
+
+      <!-- Citizen Tabs & Content -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50/70 px-6 pt-4 flex gap-6 overflow-x-auto">
+          <button onclick="switchCitizenTab('complaints')" id="citTabComplaints" class="pb-3 border-b-2 border-jal-600 text-jal-700 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-list-check mr-1.5"></i> मेरी शिकायतें व समाधान स्थिति
+          </button>
+          <button onclick="switchCitizenTab('connections')" id="citTabConnections" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-id-card mr-1.5"></i> नल कनेक्शन आवेदन (Applications)
+          </button>
+          <button onclick="switchCitizenTab('schedule')" id="citTabSchedule" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-calendar-days mr-1.5"></i> जलापूर्ति टाइम-टेबल व गुणवत्ता
+          </button>
+        </div>
+
+        <div class="p-6">
+          <!-- Tab 1: Complaints -->
+          <div id="citViewComplaints" class="space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
+              <h3 class="text-lg font-bold text-slate-900">आपकी पंजीकृत शिकायतें</h3>
+              <button onclick="openComplaintModal()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition">
+                + नई शिकायत दर्ज करें
+              </button>
+            </div>
+            
+            <div id="citizenComplaintsList" class="space-y-4">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <!-- Tab 2: Connections -->
+          <div id="citViewConnections" class="hidden space-y-4">
+            <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
+              <h3 class="text-lg font-bold text-slate-900">नल कनेक्शन अनुरोध सूची</h3>
+              <button onclick="openNewConnectionModal()" class="text-xs bg-jal-600 hover:bg-jal-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition">
+                + नया कनेक्शन फॉर्म भरें
+              </button>
+            </div>
+            <div id="citizenApplicationsList" class="space-y-4">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <!-- Tab 3: Schedule -->
+          <div id="citViewSchedule" class="hidden space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="border border-slate-200 rounded-xl p-5 bg-sky-50/40">
+                <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-clock text-jal-600"></i> दैनिक जलापूर्ति रोस्टर (वार्ड वार)
+                </h4>
+                <div class="space-y-3 text-sm">
+                  <div class="flex justify-between p-2.5 bg-white rounded-lg border border-slate-200">
+                    <span class="font-medium">प्रातः कालीन आपूर्ति (Morning)</span>
+                    <span class="font-bold text-jal-700">06:00 AM - 08:30 AM</span>
+                  </div>
+                  <div class="flex justify-between p-2.5 bg-white rounded-lg border border-slate-200">
+                    <span class="font-medium">सायं कालीन आपूर्ति (Evening)</span>
+                    <span class="font-bold text-jal-700">05:00 PM - 07:00 PM</span>
+                  </div>
+                  <div class="flex justify-between p-2.5 bg-white rounded-lg border border-slate-200">
+                    <span class="font-medium">जल शोधन एवं पाइपलाइन फ्लशिंग</span>
+                    <span class="font-bold text-slate-600">शनिवार 12:00 PM - 02:00 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border border-slate-200 rounded-xl p-5 bg-emerald-50/40">
+                <h4 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-flask-vial text-emerald-600"></i> जल गुणवत्ता प्रमाणन (आज का परीक्षण)
+                </h4>
+                <div class="grid grid-cols-3 gap-3 text-center">
+                  <div class="bg-white p-3 rounded-lg border border-emerald-200">
+                    <div class="text-xs text-slate-500">TDS स्तर</div>
+                    <div class="text-lg font-bold text-emerald-700 mt-1">180 ppm</div>
+                    <div class="text-[10px] text-emerald-600">उत्कृष्ट (Safe)</div>
+                  </div>
+                  <div class="bg-white p-3 rounded-lg border border-emerald-200">
+                    <div class="text-xs text-slate-500">pH मान</div>
+                    <div class="text-lg font-bold text-emerald-700 mt-1">7.3 pH</div>
+                    <div class="text-[10px] text-emerald-600">संतुलित</div>
+                  </div>
+                  <div class="bg-white p-3 rounded-lg border border-emerald-200">
+                    <div class="text-xs text-slate-500">क्लोरीन</div>
+                    <div class="text-lg font-bold text-emerald-700 mt-1">0.4 mg/L</div>
+                    <div class="text-[10px] text-emerald-600">कीटाणुमुक्त</div>
+                  </div>
+                </div>
+                <div class="mt-4 text-xs text-slate-600 bg-white p-3 rounded-lg border border-slate-200">
+                  <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> जल जीवन मिशन प्रयोगशाला द्वारा प्रमाणित। यह जल पूर्णतः पीने योग्य है।
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- SECTION 3: ADMIN MANAGEMENT DASHBOARD -->
+    <!-- ============================================== -->
+    <div id="sectionAdmin" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Admin Top Banner -->
+      <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/20 text-sky-300 rounded-full text-xs font-semibold border border-sky-400/30 mb-2">
+              <i class="fa-solid fa-user-gear"></i> संभागीय एडमिन कंट्रोल रूम
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">नल जल योजना विभागीय प्रबंधन पोर्टल</h2>
+            <p class="text-slate-400 text-sm mt-1">प्रखंड: सदर | जिला: केंद्रीय ग्रामीण मंडल | लॉग इन: <span class="text-sky-300 font-mono" id="adminEmailDisp">admin@naljal.gov.in</span></p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="openBroadcastModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn"></i> नागरिक सूचना जारी करें
+            </button>
+            <button onclick="exportDataReport()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-bold rounded-xl text-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-file-arrow-down"></i> रिपोर्ट एक्सपोर्ट
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin KPI Counters -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <button type="button" onclick="openApplicationsFromKpi(false)" class="text-left bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-sky-400 transition cursor-pointer">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">कुल नए आवेदन</div>
+          <div class="text-2xl font-black text-slate-900 mt-2" id="kpiTotalConns">0</div>
+          <div class="text-xs text-sky-700 font-medium mt-1">सभी आवेदन देखने के लिए क्लिक करें</div>
+        </button>
+
+        <button type="button" onclick="openApplicationsFromKpi(true)" class="text-left bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-sky-400 transition cursor-pointer">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">लंबित नए आवेदन</div>
+          <div class="text-2xl font-black text-jal-600 mt-2" id="kpiPendingApps">4</div>
+          <div class="text-xs text-jal-700 font-medium mt-1">पेंडिंग आवेदन देखने के लिए क्लिक करें</div>
+        </button>
+
+        <button type="button" onclick="openGrievancesFromKpi()" class="text-left bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 transition cursor-pointer">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">कुल शिकायतें (Grievances)</div>
+          <div class="text-2xl font-black text-amber-600 mt-2" id="kpiActiveComplaints">3</div>
+          <div class="text-xs text-amber-700 font-medium mt-1">सभी शिकायतें और स्थिति देखने के लिए क्लिक करें</div>
+        </button>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">जल भंडारण ओवरहेड टैंक</div>
+          <div class="text-2xl font-black text-emerald-600 mt-2">84% भरा</div>
+          <div class="text-xs text-slate-500 font-medium mt-1">प्रेशर 2.8 Bar (सामान्य)</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">फील्ड स्टाफ (जल मित्र)</div>
+          <div class="text-2xl font-black text-purple-600 mt-2">18 ऑन-ड्यूटी</div>
+          <div class="text-xs text-purple-700 font-medium mt-1">6 पंचायत कवरेज</div>
+        </div>
+      </div>
+
+      <!-- Admin Tabs Navigation -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="border-b border-slate-200 bg-slate-50/70 px-6 pt-4 flex gap-6 overflow-x-auto">
+          <button onclick="switchAdminTab('grievances')" id="admTabGrievances" class="pb-3 border-b-2 border-jal-600 text-jal-700 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> शिकायत निवारण डेस्क (<span id="admGrievanceBadge">0</span>)
+          </button>
+          <button onclick="switchAdminTab('applications')" id="admTabApplications" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-file-signature mr-1.5"></i> नया कनेक्शन अनुमोदन (<span id="admAppBadge">0</span>)
+          </button>
+          <button onclick="switchAdminTab('monitoring')" id="admTabMonitoring" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 font-bold text-sm whitespace-nowrap">
+            <i class="fa-solid fa-gauge-high mr-1.5"></i> जल गुणवत्ता व पम्पिंग स्टेशन मॉनिटरिंग
+          </button>
+        </div>
+
+        <div class="p-6">
+          
+          <!-- ADMIN TAB 1: GRIEVANCE DESK -->
+          <div id="admViewGrievances" class="space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-2">
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">नागरिकों द्वारा दर्ज जल शिकायतें</h3>
+                <p class="text-xs text-slate-500">शिकायत की स्थिति अपडेट करें अथवा संबंधित जल मित्र (प्लंबर) को कार्य असाइन करें।</p>
+              </div>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="exportGrievancesCsv()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-3 py-2 font-bold">CSV डाउनलोड</button>
+                <select id="grievanceFilterStatus" onchange="renderAdminGrievances()" class="text-xs border border-slate-300 rounded-lg p-2 font-medium bg-white">
+                  <option value="ALL">सभी स्थितियां (All Status)</option>
+                  <option value="दर्ज (Submitted)">दर्ज (Submitted)</option>
+                  <option value="जल मित्र को सौंपा गया">जल मित्र को सौंपा गया</option>
+                  <option value="कार्य प्रगति पर">कार्य प्रगति पर</option>
+                  <option value="समाधान पूर्ण (Resolved)">समाधान पूर्ण (Resolved)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-semibold">
+                    <th class="p-3.5 rounded-l-xl">टिकट ID</th>
+                    <th class="p-3.5">नागरिक व संपर्क</th>
+                    <th class="p-3.5">पंचायत / वार्ड</th>
+                    <th class="p-3.5">समस्या का प्रकार</th>
+                    <th class="p-3.5">प्राथमिकता</th>
+                    <th class="p-3.5">वर्तमान स्थिति</th>
+                    <th class="p-3.5 rounded-r-xl text-right">कार्रवाई (Action)</th>
+                  </tr>
+                </thead>
+                <tbody id="adminGrievanceTableBody" class="divide-y divide-slate-100">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ADMIN TAB 2: APPLICATIONS APPROVAL -->
+          <div id="admViewApplications" class="hidden space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-2">
+              <div><h3 class="text-lg font-bold text-slate-900">नए नल कनेक्शन आवेदन सत्यापन</h3><p class="text-xs text-slate-500">आवेदक, पिता का नाम, मोबाइल और स्थिति देखें।</p></div>
+              <div class="flex flex-wrap gap-2"><select id="applicationFilterStatus" onchange="renderAdminApplications()" class="text-xs border border-slate-300 rounded-lg p-2 bg-white"><option value="ALL">सभी आवेदन</option><option value="PENDING">केवल Pending</option><option value="APPROVED">केवल Approved</option><option value="REJECTED">केवल Rejected</option></select><button onclick="exportApplicationsCsv()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-3 py-2 font-bold">फिल्टर CSV</button></div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-semibold">
+                    <th class="p-3.5 rounded-l-xl">आवेदन सं.</th>
+                    <th class="p-3.5">आवेदक का नाम</th>
+                    <th class="p-3.5">पंचायत / पता</th>
+                    <th class="p-3.5">कनेक्शन प्रकार</th>
+                    <th class="p-3.5">आवेदन तिथि</th>
+                    <th class="p-3.5">स्थिति</th>
+                    <th class="p-3.5 rounded-r-xl text-right">कार्रवाई</th>
+                  </tr>
+                </thead>
+                <tbody id="adminApplicationTableBody" class="divide-y divide-slate-100">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ADMIN TAB 3: MONITORING TELEMETRY -->
+          <div id="admViewMonitoring" class="hidden space-y-6">
+            <div class="grid md:grid-cols-3 gap-6">
+              
+              <!-- Reservoir Tank 1 -->
+              <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="font-bold text-slate-900 text-sm">सेक्टर-1 मुख्य ओवरहेड टंकी</h4>
+                  <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Online</span>
+                </div>
+                <div class="relative w-full h-32 bg-slate-200 rounded-xl overflow-hidden flex flex-col justify-end p-3">
+                  <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-jal-600 to-sky-400 transition-all duration-700" style="height: 82%;"></div>
+                  <div class="relative z-10 text-white font-bold text-sm drop-shadow">
+                    82,000 / 100,000 L (82%)
+                  </div>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                  <div>पंप स्थिति: <span class="font-bold text-emerald-600">चालू (Motor ON)</span></div>
+                  <div>इनलेट फ्लो: <span class="font-bold">420 L/min</span></div>
+                </div>
+              </div>
+
+              <!-- Reservoir Tank 2 -->
+              <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="font-bold text-slate-900 text-sm">सेक्टर-2 टंकी</h4>
+                  <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Online</span>
+                </div>
+                <div class="relative w-full h-32 bg-slate-200 rounded-xl overflow-hidden flex flex-col justify-end p-3">
+                  <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-jal-600 to-sky-400 transition-all duration-700" style="height: 65%;"></div>
+                  <div class="relative z-10 text-white font-bold text-sm drop-shadow">
+                    52,000 / 80,000 L (65%)
+                  </div>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                  <div>पंप स्थिति: <span class="font-bold text-amber-600">स्टैंडबाय (Standby)</span></div>
+                  <div>इनलेट फ्लो: <span class="font-bold">0 L/min</span></div>
+                </div>
+              </div>
+
+              <!-- Reservoir Tank 3 -->
+              <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                  <h4 class="font-bold text-slate-900 text-sm">सेक्टर-3 मिनी जलमीनार</h4>
+                  <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Online</span>
+                </div>
+                <div class="relative w-full h-32 bg-slate-200 rounded-xl overflow-hidden flex flex-col justify-end p-3">
+                  <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-jal-600 to-sky-400 transition-all duration-700" style="height: 94%;"></div>
+                  <div class="relative z-10 text-white font-bold text-sm drop-shadow">
+                    47,000 / 50,000 L (94%)
+                  </div>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                  <div>पंप स्थिति: <span class="font-bold text-emerald-600">फुल कट-ऑफ</span></div>
+                  <div>इनलेट फ्लो: <span class="font-bold">0 L/min</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODALS CONTAINER -->
+  <!-- ============================================== -->
+
+  <!-- 1. AUTH MODAL (CITIZEN & ADMIN LOGIN / SIGNUP) -->
+  <div id="authModal" class="auth-overlay fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="auth-dialog bg-white rounded-2xl sm:rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all my-2 sm:my-4 flex flex-col max-h-[96vh]">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-jal-800 to-jal-600 text-white p-6 relative">
+        <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-white/70 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-faucet-drip"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold" id="authModalTitle">नागरिक प्रवेश द्वार</h3>
+            <p class="text-xs text-sky-200" id="authModalSub">Nal Jal Yojana Secure Gateway</p>
+          </div>
+        </div>
+
+        <!-- Role Toggle Pill -->
+        <div class="mt-4 bg-black/20 p-1 rounded-xl flex">
+          <button id="roleTabCitizen" onclick="switchAuthRole('citizen')" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-jal-900 shadow">
+            नागरिक (Citizen)
+          </button>
+          <button id="roleTabAdmin" onclick="switchAuthRole('admin')" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition text-white/80 hover:text-white">
+            विभागीय एडमिन (Admin)
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body: scrollable so long sign-up forms remain usable -->
+      <div class="auth-modal-body p-4 sm:p-6 space-y-4 overflow-y-auto">
+        
+        <!-- Toggle Between Login / Register for Citizen -->
+        <div id="citizenModeSwitcher" class="flex border-b border-slate-200 pb-2">
+          <button onclick="setAuthMode('login')" id="modeTabLogin" class="flex-1 pb-1 text-sm font-bold border-b-2 border-jal-600 text-jal-700">
+            लॉग इन (Sign In)
+          </button>
+          <button onclick="setAuthMode('register')" id="modeTabRegister" class="flex-1 pb-1 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-700">
+            नया पंजीकरण (Sign Up)
+          </button>
+        </div>
+
+        <!-- FORM: CITIZEN LOGIN -->
+        <form id="formCitizenLogin" onsubmit="handleCitizenLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर या ईमेल</label>
+            <div class="relative">
+              <i class="fa-solid fa-mobile-screen absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+              <input type="text" id="citLogMobile" required placeholder="जैसे: 9876543210 या ram@gmail.com" class="w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 focus:border-jal-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-bold text-slate-700">पासवर्ड (Password)</label>
+              <button type="button" onclick="startForgotPasswordFlow()" class="text-xs font-semibold text-jal-600 hover:underline">
+                पासवर्ड भूल गए?
+              </button>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+              <input type="password" id="citLogPass" required placeholder="अपना पासवर्ड दर्ज करें" class="w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 focus:border-jal-500 outline-none">
+            </div>
+          </div>
+          <button type="submit" class="w-full py-3 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl shadow-md shadow-jal-600/30 transition text-sm">
+            सुरक्षित लॉगिन करें
+          </button>
+        </form>
+
+        <!-- FORM: CITIZEN REGISTRATION -->
+        <form id="formCitizenRegister" onsubmit="handleCitizenRegister(event)" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">पूरा नाम (Full Name) *</label>
+            <input type="text" id="regName" required placeholder="उदा. राम कुमार" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">पिता का नाम *</label>
+            <input type="text" id="regFatherName" required placeholder="पिता का पूरा नाम" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">जन्म तिथि *</label>
+              <input type="date" id="regDob" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">आधार नंबर *</label>
+              <input type="text" id="regAadhaar" required inputmode="numeric" pattern="[0-9]{12}" maxlength="12" placeholder="12 अंकों का आधार" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">मकान नंबर *</label>
+              <input type="text" id="regHouse" required placeholder="मकान नंबर" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">ब्लॉक *</label>
+              <input type="text" id="regBlock" required placeholder="ब्लॉक का नाम" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">गांव *</label>
+              <input type="text" id="regVillage" required placeholder="गांव का नाम" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">शहर *</label>
+              <input type="text" id="regCity" required placeholder="शहर का नाम" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">पिन कोड *</label>
+            <input type="text" id="regPincode" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6 अंकों का PIN Code" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">ग्राम पंचायत *</label>
+              <input type="text" id="regPanchayat" required placeholder="ग्राम पंचायत का नाम लिखें" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">वार्ड संख्या *</label>
+              <input type="number" id="regWard" min="1" max="50" required placeholder="वार्ड नं" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर (OTP सत्यापन हेतु) *</label>
+            <input type="tel" id="regMobile" pattern="[0-9]{10}" required placeholder="10 अंकों का मोबाइल नंबर" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">ईमेल (वैकल्पिक)</label>
+            <input type="email" id="regEmail" placeholder="example@gmail.com" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">नया पासवर्ड बनाएं *</label>
+            <input type="password" id="regPass" required placeholder="न्यूनतम 6 अक्षर" minlength="6" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+            खाता बनाएं और लॉगिन करें
+          </button>
+        </form>
+
+        <!-- FORM: ADMIN LOGIN -->
+        <form id="formAdminLogin" onsubmit="handleAdminLogin(event)" class="hidden space-y-4">
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
+            <i class="fa-solid fa-lock text-sm mt-0.5"></i>
+            <span>केवल अधिकृत विभागीय अधिकारियों और नोडल ऑपरेटरों के लिए।</span>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">विभागीय ईमेल / Admin ID</label>
+            <div class="relative">
+              <i class="fa-solid fa-user-shield absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+              <input type="text" id="admEmail" required placeholder="admin@naljal.gov.in" class="w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">सुरक्षा पिन / पासवर्ड</label>
+            <div class="relative">
+              <i class="fa-solid fa-key absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+              <input type="password" id="admPass" required placeholder="पासवर्ड दर्ज करें" class="w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">मंडल / सर्किल चयन</label>
+            <select class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white">
+              <option>सदर ग्रामीण मंडल - सर्किल 01</option>
+              <option>उत्तरी जल संभाग - सर्किल 02</option>
+              <option>दक्षिणी पेयजल प्रभाग - सर्किल 03</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md transition text-sm">
+            Admin Login
+          </button>
+          <div class="text-center pt-2">
+            
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. FORGOT PASSWORD (OTP BASED) MODAL -->
+  <div id="forgotPasswordModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+      <div class="bg-gradient-to-r from-jal-700 to-sky-600 text-white p-6 relative">
+        <button onclick="closeForgotModal()" class="absolute top-5 right-5 text-white/70 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 class="text-xl font-bold flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved"></i> पासवर्ड रीसेट (OTP आधारित)
+        </h3>
+        <p class="text-xs text-sky-100 mt-1">अपने पंजीकृत मोबाइल नंबर या ईमेल से पासवर्ड रीसेट करें</p>
+      </div>
+
+      <div class="p-6">
+        
+        <!-- Step 1: Enter Mobile -->
+        <div id="forgotStep1" class="space-y-4">
+          <p class="text-xs text-slate-600 leading-relaxed">
+            कृपया अपना पंजीकृत 10 अंकों का मोबाइल नंबर दर्ज करें। हम आपको 6 अंकों का सुरक्षित OTP भेजेंगे।
+          </p>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">पंजीकृत मोबाइल नंबर</label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-2.5 text-slate-500 text-sm font-semibold">+91</span>
+              <input type="tel" id="fpMobileInput" placeholder="9876543210" class="w-full pl-12 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none font-mono">
+            </div>
+          </div>
+          <button onclick="sendForgotOtp()" class="w-full py-2.5 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl shadow transition text-sm">
+            OTP भेजें (Send OTP)
+          </button>
+        </div>
+
+        <!-- Step 2: Verify OTP and Set New Password -->
+        <div id="forgotStep2" class="hidden space-y-4">
+          <div class="p-3 bg-sky-50 rounded-xl border border-sky-200 text-xs text-sky-900 flex justify-between items-center">
+            <span>OTP भेजा गया: <b id="fpSentTarget" class="font-mono">9876543210</b></span>
+            <span id="fpTimer" class="font-mono text-jal-700 font-bold">01:00</span>
+          </div>
+
+          <!-- Highlight Helper Box -->
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-300 text-amber-900 text-xs flex items-center justify-between">
+            <div>
+              <i class="fa-solid fa-bell text-amber-600 mr-1 animate-bounce"></i>
+              आपका OTP स्क्रीन के ऊपर SMS में आया है: <b id="fpOtpDisplayBadge" class="font-mono font-black text-amber-900 text-sm tracking-wider">------</b>
+            </div>
+            <button type="button" onclick="autoFillCurrentOtp()" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded text-[11px] font-bold shrink-0">
+              Auto-Fill
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">6-अंकों का OTP कोड</label>
+            <div class="flex gap-2">
+              <input type="text" id="fpOtpInput" maxlength="6" placeholder="उदा. 482910" class="flex-1 text-center tracking-widest text-lg font-mono py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+              <button type="button" onclick="autoFillCurrentOtp()" class="px-3.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl transition" title="OTP स्वतः भरें">
+                भरें
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">नया पासवर्ड</label>
+            <input type="password" id="fpNewPass" placeholder="नया पासवर्ड दर्ज करें" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड की पुष्टि करें</label>
+            <input type="password" id="fpConfirmPass" placeholder="पासवर्ड दोबारा दर्ज करें" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+
+          <button onclick="submitNewPasswordWithOtp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition text-sm">
+            सत्यापित करें और पासवर्ड बदलें
+          </button>
+          
+          <div class="text-center">
+            <button id="fpResendBtn" onclick="resendForgotOtp()" class="text-xs text-jal-600 font-bold hover:underline">
+              OTP दोबारा भेजें (Resend OTP)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. NEW CONNECTION APPLICATION MODAL -->
+  <div id="newConnectionModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-3xl my-2 sm:my-4 shadow-2xl border border-slate-100 overflow-hidden max-h-[96vh] flex flex-col">
+      <div class="bg-gradient-to-r from-jal-800 to-jal-600 text-white p-5 flex justify-between items-center shrink-0">
+        <div>
+          <h3 class="text-lg font-bold">नया घरेलू नल कनेक्शन आवेदन</h3>
+          <p class="text-xs text-sky-100">National Rural Water Tap Connection Form</p>
+        </div>
+        <button onclick="closeNewConnectionModal()" class="text-white/70 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="newConnForm" onsubmit="handleNewConnectionSubmit(event)" class="p-6 overflow-y-auto space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">आवेदक / मुखिया का नाम *</label>
+          <input type="text" id="appHeadName" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">आधार संख्या (वैकल्पिक/मास्क्ड)</label>
+            <input type="text" id="appAadhaar" placeholder="XXXX-XXXX-1234" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">मोबाइल नंबर *</label>
+            <input type="tel" id="appMobile" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">ग्राम पंचायत *</label>
+            <input type="text" id="appPanchayat" required placeholder="ग्राम पंचायत का नाम लिखें" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">वार्ड संख्या *</label>
+            <input type="number" id="appWard" required min="1" max="50" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">पूरा आवासीय पता व लैंडमार्क *</label>
+          <textarea id="appAddress" required rows="2" placeholder="मकान संख्या, टोला, मुख्य लैंडमार्क..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none"></textarea>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">कनेक्शन का प्रकार *</label>
+            <select id="appType" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white">
+              <option value="घरेलू (Domestic)">घरेलू (Domestic)</option>
+              <option value="सामुदायिक / स्कूल">सामुदायिक / स्कूल</option>
+              <option value="कृषि / पशुपालन">कृषि / पशुपालन</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">आधार कार्ड अपलोड</label>
+            <input type="file" id="appAadhaarDoc" accept="image/*,.pdf,application/pdf" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-jal-50 file:text-jal-700 hover:file:bg-jal-100">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">वोटर ID कार्ड अपलोड</label>
+            <input type="file" id="appVoterDoc" accept="image/*,.pdf,application/pdf" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-jal-50 file:text-jal-700 hover:file:bg-jal-100">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">PAN कार्ड अपलोड</label>
+            <input type="file" id="appPanDoc" accept="image/*,.pdf,application/pdf" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg border border-slate-200 p-1">
+          </div>
+          <p class="sm:col-span-2 text-xs text-slate-500">PDF/JPG/PNG स्वीकार्य। प्रत्येक फ़ाइल 500 KB तक रखें। दस्तावेज़ इस ब्राउज़र में सेव होंगे; वास्तविक साझा पोर्टल के लिए सुरक्षित सर्वर आवश्यक है।</p>
+        </div>
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
+          <span>जल जीवन मिशन के अंतर्गत ग्रामीण घरेलू नल कनेक्शन पूर्णतः निःशुल्क स्थापित किया जाता है।</span>
+        </div>
+        <div class="pt-2">
+          <button type="submit" class="w-full py-3 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+            आवेदन सबमिट करें (Submit Application)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin application details and uploaded document viewer -->
+  <div id="adminApplicationDetailsModal" class="fixed inset-0 z-[80] bg-slate-900/70 hidden items-start justify-center p-2 sm:p-5 overflow-y-auto">
+    <div class="bg-white rounded-2xl w-full max-w-3xl my-2 shadow-2xl overflow-hidden">
+      <div class="bg-slate-900 text-white p-4 flex items-center justify-between"><div><h3 class="font-bold">आवेदन और दस्तावेज़</h3><p class="text-xs text-slate-300">केवल विभागीय समीक्षा</p></div><button type="button" onclick="closeApplicationDetails()" class="text-xl" aria-label="बंद करें">×</button></div>
+      <div id="adminApplicationDetailsContent" class="p-4 sm:p-6 space-y-4"></div>
+      <div class="p-4 border-t flex justify-end"><button type="button" onclick="closeApplicationDetails()" class="px-4 py-2 rounded-lg bg-slate-800 text-white font-bold">बंद करें</button></div>
+    </div>
+  </div>
+
+  <!-- New connection application review/preview -->
+  <div id="applicationPreviewModal" class="fixed inset-0 z-[70] bg-slate-900/70 hidden items-start justify-center p-2 sm:p-5 overflow-y-auto">
+    <div class="bg-white rounded-2xl w-full max-w-3xl my-2 shadow-2xl overflow-hidden">
+      <div class="bg-slate-900 text-white p-4 flex items-center justify-between"><div><h3 class="font-bold text-lg">आवेदन की जाँच करें</h3><p class="text-xs text-slate-300">सबमिट करने से पहले सभी विवरण सही होने की पुष्टि करें</p></div><button type="button" onclick="closeApplicationPreview()" class="text-xl">×</button></div>
+      <div id="applicationPreviewContent" class="p-4 sm:p-6"></div>
+      <div class="p-4 border-t flex flex-col sm:flex-row gap-3"><button type="button" onclick="backToConnectionForm()" class="flex-1 px-4 py-3 rounded-xl border border-slate-300 font-bold">विवरण बदलें</button><button type="button" onclick="confirmApplicationAndPrint()" class="flex-1 px-4 py-3 rounded-xl bg-emerald-600 text-white font-bold">आवेदन जमा करें और प्रिंट करें</button></div>
+    </div>
+  </div>
+
+  <!-- 4. REPORT GRIEVANCE / ISSUE MODAL -->
+  <div id="grievanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-start sm:items-center justify-center overflow-y-auto overscroll-contain p-2 sm:p-4" style="scroll-behavior:smooth;">
+    <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] shadow-2xl border border-slate-100 overflow-hidden flex flex-col">
+      <div class="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-5 flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-bold">पेयजल शिकायत / समस्या निवारण</h3>
+          <p class="text-xs text-amber-100">Log Pipeline Leakage / Contamination Issue</p>
+        </div>
+        <button onclick="closeComplaintModal()" class="text-white/70 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="grievanceForm" onsubmit="handleGrievanceSubmit(event)" class="p-4 sm:p-6 space-y-4 overflow-y-auto overscroll-contain flex-1 min-h-0" style="scroll-behavior:smooth; -webkit-overflow-scrolling:touch;">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">समस्या की श्रेणी (Issue Category) *</label>
+          <select id="grvCategory" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+            <option value="पाइपलाइन लीकेज (Pipeline Leakage)">मुख्य पाइपलाइन लीकेज (Pipeline Leakage)</option>
+            <option value="दूषित या गंदा पानी (Contaminated Water)">दूषित या गंदा पानी (Contaminated Water)</option>
+            <option value="लो प्रेशर / पानी न आना (No Water)">लो प्रेशर या पानी बिल्कुल न आना</option>
+            <option value="मोटर या बोरवेल खराबी (Pump Failure)">मोटर या बोरवेल खराबी (Pump Failure)</option>
+            <option value="टूटी हुई सार्वजनिक टोटी (Broken Tap)">टूटी हुई सार्वजनिक टोटी (Broken Tap)</option>
+          </select>
+        </div>
+        <div class="rounded-xl border border-amber-200 bg-amber-50/60 p-4 space-y-3">
+          <div class="font-bold text-sm text-slate-800">पंजीकरण के अनुसार आपकी जानकारी (Registered Details)</div>
+          <p class="text-xs text-slate-600">ये विवरण आपके नागरिक पंजीकरण से अपने-आप भरे गए हैं। यदि कोई जानकारी गलत है, तो पहले अपने प्रोफाइल/पंजीकरण विवरण को अपडेट करें।</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">पूरा नाम</label><div id="grvCitizenName" class="rounded-lg border bg-white px-3 py-2 min-h-10 break-words">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">पिता का नाम</label><div id="grvFatherName" class="rounded-lg border bg-white px-3 py-2 min-h-10 break-words">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">जन्म तिथि</label><div id="grvDob" class="rounded-lg border bg-white px-3 py-2 min-h-10">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">मोबाइल नंबर</label><div id="grvMobile" class="rounded-lg border bg-white px-3 py-2 min-h-10">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">ईमेल</label><div id="grvEmail" class="rounded-lg border bg-white px-3 py-2 min-h-10 break-words">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">आधार नंबर</label><div id="grvAadhaar" class="rounded-lg border bg-white px-3 py-2 min-h-10">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">ग्राम पंचायत</label><div id="grvPanchayatDisplay" class="rounded-lg border bg-white px-3 py-2 min-h-10">—</div></div>
+            <div><label class="block text-xs font-semibold text-slate-600 mb-1">वार्ड संख्या</label><div id="grvWardDisplay" class="rounded-lg border bg-white px-3 py-2 min-h-10">—</div></div>
+            <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">पंजीकृत पता</label><div id="grvAddress" class="rounded-lg border bg-white px-3 py-2 min-h-10 break-words">—</div></div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">समस्या का सटीक स्थान / पता *</label>
+          <input type="text" id="grvLocation" required placeholder="जैसे: प्राथमिक विद्यालय के पास, मुख्य मार्ग" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">समस्या का विस्तृत विवरण</label>
+          <textarea id="grvDesc" rows="3" placeholder="कृपया स्थिति का विवरण दें ताकि जल मित्र सही उपकरणों के साथ पहुंच सकें..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">प्राथमिकता (Urgency)</label>
+          <select id="grvPriority" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none bg-white font-medium">
+            <option value="मध्यम (Normal)">मध्यम (Normal - 24 to 48 hrs)</option>
+            <option value="अति गंभीर (Urgent)">अति गंभीर (Urgent - पानी बह रहा है)</option>
+            <option value="सामान्य (Low)">सामान्य (Routine Maintenance)</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+          शिकायत दर्ज करें (Register Grievance)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. TRACK COMPLAINT / APPLICATION MODAL -->
+  <div id="trackModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-slate-900 to-jal-900 text-white p-5 flex justify-between items-center">
+        <div>
+          <h3 class="text-lg font-bold">शिकायत एवं आवेदन स्थिति ट्रैकर</h3>
+          <p class="text-xs text-sky-200">Track Realtime Resolution Progress</p>
+        </div>
+        <button onclick="closeTrackModal()" class="text-white/70 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div class="flex gap-2">
+          <input type="text" id="trackSearchInput" placeholder="टिकट सं. दर्ज करें (उदा. TKT-7701 या NJ-APP-102)" class="flex-1 px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none font-mono">
+          <button onclick="searchTicketTrack()" class="px-5 py-2.5 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl text-sm transition">
+            खोजें
+          </button>
+        </div>
+
+        <div id="trackResultBox" class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-center text-slate-500 text-xs py-4">
+            कृपया अपनी शिकायत या आवेदन संख्या डालकर "खोजें" बटन दबाएं।
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. BILL PAYMENT MODAL -->
+  <div id="billModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl border border-slate-100 overflow-hidden text-center p-6 space-y-4">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
+        <i class="fa-solid fa-receipt"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-slate-900">मासिक जल उपभोक्ता शुल्क</h3>
+        <p class="text-xs text-slate-500">उपभोक्ता ID: <span id="billUserId" class="font-mono font-bold text-jal-600">NJ-2024-8841</span></p>
+      </div>
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left space-y-2 text-xs">
+        <div class="flex justify-between">
+          <span class="text-slate-500">बिलिंग माह:</span>
+          <span class="font-bold text-slate-800">वर्तमान माह</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">नियत शुल्क (Fixed Charge):</span>
+          <span class="font-bold text-slate-800">₹ 50.00</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-200 pt-2 text-sm font-bold text-slate-900">
+          <span>कुल देय राशि:</span>
+          <span class="text-emerald-600">₹ 50.00</span>
+        </div>
+      </div>
+      <button onclick="simulateBillPaySuccess()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+        UPI / डेबिट कार्ड से भुगतान करें (₹ 50)
+      </button>
+      <button onclick="closeBillModal()" class="text-xs text-slate-500 hover:text-slate-700 font-semibold">
+        रद्द करें
+      </button>
+    </div>
+  </div>
+
+  <!-- 7. ADMIN UPDATE GRIEVANCE MODAL -->
+  <div id="adminActionModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="bg-slate-900 text-white p-5 flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold">शिकायत स्थिति अपडेट करें</h3>
+          <p class="text-xs text-sky-200">टिकट ID: <span id="actionTicketId" class="font-mono font-bold"></span></p>
+        </div>
+        <button onclick="closeAdminActionModal()" class="text-white/70 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">असाइन करें (जल मित्र / फील्ड तकनीशियन)</label>
+          <select id="actionAssignStaff" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white">
+            <option value="सुरेश कुमार (प्लंबर, रामपुर)">सुरेश कुमार (प्लंबर, रामपुर)</option>
+            <option value="महेश वर्मा (इलेक्ट्रीशियन, कल्याणपुर)">महेश वर्मा (इलेक्ट्रीशियन, कल्याणपुर)</option>
+            <option value="दिनेश मंडल (पाइप फिटर)">दिनेश मंडल (पाइप फिटर)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">नया स्टेटस (Change Status)</label>
+          <select id="actionNewStatus" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none bg-white font-semibold">
+            <option value="जल मित्र को सौंपा गया">जल मित्र को सौंपा गया (Assigned)</option>
+            <option value="कार्य प्रगति पर">कार्य प्रगति पर (In Progress)</option>
+            <option value="समाधान पूर्ण (Resolved)">समाधान पूर्ण (Resolved)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">कार्य प्रगति व टिप्पणी (Resolution Remarks)</label>
+          <textarea id="actionRemarks" rows="2" placeholder="पाइप रिपेयर कार्य पूरा किया गया, पानी प्रेशर बहाल..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-jal-500 outline-none"></textarea>
+        </div>
+        <button onclick="saveAdminGrievanceAction()" class="w-full py-2.5 bg-jal-600 hover:bg-jal-700 text-white font-bold rounded-xl shadow transition text-sm">
+          अपडेट सहेजें (Update Status)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. ADMIN BROADCAST MODAL -->
+  <div id="broadcastModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="bg-amber-600 text-white p-5 flex justify-between items-center">
+        <h3 class="text-base font-bold">नागरिक सूचना या अलर्ट जारी करें</h3>
+        <button onclick="closeBroadcastModal()" class="text-white/70 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">सूचना शीर्षक</label>
+          <input type="text" id="bcTitle" placeholder="उदा. मुख्य पाइपलाइन मरम्मत हेतु शटडाउन सूचना" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">विस्तृत संदेश</label>
+          <textarea id="bcBody" rows="3" placeholder="कल प्रातः 10:00 से 02:00 बजे तक जलापूर्ति बाधित रहेगी..." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+        </div>
+        <button onclick="publishBroadcastAlert()" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow transition text-sm">
+          तुरंत प्रसारित करें (Publish)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP & TOLL FREE MODAL -->
+  <div id="helpModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-jal-100 text-jal-600 flex items-center justify-center text-3xl mx-auto">
+        <i class="fa-solid fa-headset"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold text-slate-900">नागरिक सहायता केंद्र</h3>
+        <p class="text-xs text-slate-500">Ministry of Jal Shakti Helpdesk</p>
+      </div>
+      <div class="bg-slate-50 p-4 rounded-2xl text-left space-y-2 text-xs">
+        <p><b class="text-slate-800">टोल-फ्री हेल्पलाइन:</b> <span class="text-jal-600 font-bold">1800-180-1555</span></p>
+        <p><b class="text-slate-800">ईमेल संपर्क:</b> <span class="text-slate-600">support@naljal.gov.in</span></p>
+        <p><b class="text-slate-800">कार्यालय समय:</b> <span class="text-slate-600">सोमवार से शनिवार (09:00 AM - 06:00 PM)</span></p>
+      </div>
+      <button onclick="closeHelpModal()" class="w-full py-2.5 bg-jal-600 text-white rounded-xl font-bold text-sm">
+        ठीक है (Close)
+      </button>
+    </div>
+  </div>
+
+  <!-- GLOBAL ALERT DIALOG (TO REPLACE FORBIDDEN ALERT()) -->
+  <div id="toastBox" class="fixed bottom-6 right-6 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+    <div id="toastContent" class="bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700 text-sm">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+      <span id="toastMsg" class="font-medium">संदेश सफलतापूर्वक सहेजा गया!</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 text-slate-400 text-xs py-10 mt-auto border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-jal-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-faucet-drip"></i>
+          </div>
+          <span class="text-white font-bold text-base">नल जल योजना</span>
+        </div>
+        <p class="text-slate-400 leading-relaxed">
+          राष्ट्रीय ग्रामीण पेयजल मिशन, जल जीवन मिशन के अंतर्गत ग्रामीण परिवारों को गुणवत्तापूर्ण पाइप जल आपूर्ति सुनिश्चित करने हेतु समर्पित।
+        </p>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-sm mb-3">महत्वपूर्ण लिंक</h4>
+        <ul class="space-y-2">
+          <li><a href="#" onclick="showSection('home')" class="hover:text-white transition">मुख्य पृष्ठ (Home)</a></li>
+          <li><a href="#" onclick="openComplaintTrackingModal()" class="hover:text-white transition">शिकायत ट्रैक करें</a></li>
+          <li><a href="#" onclick="openNewConnectionModal()" class="hover:text-white transition">नया कनेक्शन आवेदन</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-sm mb-3">पोर्टल दिशानिर्देश</h4>
+        <ul class="space-y-2">
+          <li><span class="text-slate-400">निःशुल्क नल जल कनेक्शन नीति</span></li>
+          <li><span class="text-slate-400">जल मित्र सेवा मानक समय-सीमा</span></li>
+          <li><span class="text-slate-400">जल परीक्षण प्रयोगशाला सूची</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-bold text-sm mb-3">सुरक्षा एवं प्रमाणन</h4>
+        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
+          <p class="text-[11px] text-emerald-400 font-semibold"><i class="fa-solid fa-lock mr-1"></i> 256-Bit SSL Secured Portal</p>
+          <p class="text-[11px] text-slate-400">NIC एवं जल शक्ति दिशानिर्देशों के अनुरूप संरचित।</p>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center text-slate-500 gap-2">
+      <p>© 2026 नल जल योजना प्रबंधन पोर्टल (Jal Jeevan Mission). सर्वाधिकार सुरक्षित।</p>
+      <p>डिजिटल इंडिया पहल के अंतर्गत निर्मित</p>
+    </div>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- JAVASCRIPT LOGIC ENGINE & LOCALSTORAGE STORE -->
+  <!-- ============================================== -->
+  <div id="publicNoticeModal" class="fixed inset-0 z-[100] hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="publicNoticeTitle">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-sky-700 text-white px-5 py-4 flex items-center justify-between"><div><div class="text-xs font-bold opacity-80">नल जल योजना • नागरिक सूचना</div><h2 id="publicNoticeTitle" class="text-xl font-extrabold mt-1">नागरिक सूचना</h2></div><button onclick="closePublicNotice()" aria-label="सूचना बंद करें" class="text-2xl px-2 hover:bg-white/10 rounded-lg">×</button></div>
+      <div class="p-5"><p id="publicNoticeBody" class="text-slate-700 whitespace-pre-wrap leading-relaxed"></p><p id="publicNoticeDate" class="text-xs text-slate-400 mt-4"></p><button onclick="closePublicNotice()" class="mt-5 w-full rounded-xl bg-sky-700 hover:bg-sky-800 text-white font-bold py-3">बंद करें</button></div>
+    </div>
+  </div>
+  <script id="app-bootstrap">
+    (function () {
+      const encodedApp = "CiAgICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICAvLyBJTklUSUFMIFNUQVRFICYgTE9DQUwgU1RPUkFHRSBEQVRBQkFTRQogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgY29uc3QgU1RPUkFHRV9LRVlfQ0lUSVpFTlMgPSAnbmp5X2NpdGl6ZW5zX2RiX3YxJzsKICAgIGNvbnN0IFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMgPSAnbmp5X2dyaWV2YW5jZXNfZGJfdjEnOwogICAgY29uc3QgU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TID0gJ25qeV9hcHBsaWNhdGlvbnNfZGJfdjEnOwogICAgY29uc3QgU1RPUkFHRV9LRVlfQ1VSUkVOVF9VU0VSID0gJ25qeV9jdXJyZW50X3VzZXJfdjEnOwoKICAgIC8vIEluaXRpYWxpemUgY2xlYW4gc3RvcmFnZTogcmVtb3ZlIG9ubHkgcHJlbG9hZGVkIHNhbXBsZS9kZW1vIHJlY29yZHMuCiAgICBmdW5jdGlvbiBpbml0aWFsaXplRGF0YWJhc2UoKSB7CiAgICAgIGNvbnN0IGNpdGl6ZW5zID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9DSVRJWkVOUykgfHwgJ1tdJyk7CiAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0NJVElaRU5TLCBKU09OLnN0cmluZ2lmeShjaXRpemVucy5maWx0ZXIoYyA9PiAhWyc5ODc2NTQzMjEwJywnOTgxMTIyMzM0NCcsJzk0NTYxMjM0NTYnXS5pbmNsdWRlcyhTdHJpbmcoYy5tb2JpbGUpKSAmJiAhU3RyaW5nKGMuaWQgfHwgJycpLmluY2x1ZGVzKCdERU1PJykpKSk7CiAgICAgIGNvbnN0IGdyaWV2YW5jZXMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMpIHx8ICdbXScpOwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShTVE9SQUdFX0tFWV9HUklFVkFOQ0VTLCBKU09OLnN0cmluZ2lmeShncmlldmFuY2VzLmZpbHRlcihnID0+ICFbJ1RLVC03NzAxJywnVEtULTc3MDInXS5pbmNsdWRlcyhnLmlkKSkpKTsKICAgICAgY29uc3QgYXBwbGljYXRpb25zID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMpIHx8ICdbXScpOwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMsIEpTT04uc3RyaW5naWZ5KGFwcGxpY2F0aW9ucy5maWx0ZXIoYSA9PiAhWydOSi1BUFAtMTAxJywnTkotQVBQLTEwMiddLmluY2x1ZGVzKGEuaWQpKSkpOwogICAgfQoKICAgIC8vIEN1cnJlbnQgU2Vzc2lvbiBTdGF0ZQogICAgbGV0IGN1cnJlbnRVc2VyID0gbnVsbDsgLy8geyByb2xlOiAnY2l0aXplbicgfCAnYWRtaW4nLCBkYXRhOiB7Li4ufSB9CiAgICBsZXQgY3VycmVudEF1dGhSb2xlID0gJ2NpdGl6ZW4nOwogICAgbGV0IGN1cnJlbnRBdXRoTW9kZSA9ICdsb2dpbic7CiAgICBsZXQgZ2VuZXJhdGVkT3RwID0gbnVsbDsKICAgIGxldCBvdHBDb3VudGRvd25JbnRlcnZhbCA9IG51bGw7CgogICAgLy8gRnJlc2ggaW5zdGFsbGF0aW9uOiBjbGVhciBhbGwgb2xkIGNpdGl6ZW4sIGdyaWV2YW5jZSwgYXBwbGljYXRpb24gYW5kIHNlc3Npb24gZGF0YSBPTkNFLgogICAgLy8gVGhpcyByZXNldCBpcyBpbnRlbnRpb25hbGx5IG9uZS10aW1lIHNvIG5ldyByZWdpc3RyYXRpb25zIHBlcnNpc3QgYWZ0ZXIgcmVsb2FkLgogICAgY29uc3QgRlJFU0hfSU5TVEFMTF9SRVNFVF9LRVkgPSAnbmp5X2ZyZXNoX2luc3RhbGxfcmVzZXRfMjAyNjEwMzBfdjEnOwogICAgZnVuY3Rpb24gY2xlYXJPbGRQb3J0YWxEYXRhT25jZSgpIHsKICAgICAgaWYgKGxvY2FsU3RvcmFnZS5nZXRJdGVtKEZSRVNIX0lOU1RBTExfUkVTRVRfS0VZKSA9PT0gJ2RvbmUnKSByZXR1cm47CiAgICAgIFtTVE9SQUdFX0tFWV9DSVRJWkVOUywgU1RPUkFHRV9LRVlfR1JJRVZBTkNFUywgU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TLCBTVE9SQUdFX0tFWV9DVVJSRU5UX1VTRVJdLmZvckVhY2goa2V5ID0+IGxvY2FsU3RvcmFnZS5yZW1vdmVJdGVtKGtleSkpOwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShGUkVTSF9JTlNUQUxMX1JFU0VUX0tFWSwgJ2RvbmUnKTsKICAgIH0KCiAgICAvLyBSdW4gb24gc3RhcnR1cAogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ0RPTUNvbnRlbnRMb2FkZWQnLCAoKSA9PiB7CiAgICAgIGNsZWFyT2xkUG9ydGFsRGF0YU9uY2UoKTsKICAgICAgaW5pdGlhbGl6ZURhdGFiYXNlKCk7CiAgICAgIGNoZWNrU2F2ZWRTZXNzaW9uKCk7CiAgICAgIHJlbmRlckFkbWluRGFzaGJvYXJkKCk7CiAgICAgIHNldFRpbWVvdXQoKCkgPT4gc2hvd1B1YmxpY05vdGljZUlmTmVlZGVkKGZhbHNlKSwgMjUwKTsKICAgIH0pOwoKICAgIC8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgIC8vIFVJIFRPQVNUICYgTk9USUZJQ0FUSU9OIEhFTFBFUlMgKE5PIEFMRVJUKCkgUlVMRSkKICAgIC8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgIGZ1bmN0aW9uIHNob3dUb2FzdChtc2csIGlzU3VjY2VzcyA9IHRydWUpIHsKICAgICAgY29uc3QgdG9hc3RCb3ggPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndG9hc3RCb3gnKTsKICAgICAgY29uc3QgdG9hc3RNc2cgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndG9hc3RNc2cnKTsKICAgICAgY29uc3QgdG9hc3RJY29uID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RvYXN0SWNvbicpOwoKICAgICAgdG9hc3RNc2cudGV4dENvbnRlbnQgPSBtc2c7CiAgICAgIGlmIChpc1N1Y2Nlc3MpIHsKICAgICAgICB0b2FzdEljb24uY2xhc3NOYW1lID0gImZhLXNvbGlkIGZhLWNpcmNsZS1jaGVjayB0ZXh0LWVtZXJhbGQtNDAwIHRleHQtbGciOwogICAgICB9IGVsc2UgewogICAgICAgIHRvYXN0SWNvbi5jbGFzc05hbWUgPSAiZmEtc29saWQgZmEtdHJpYW5nbGUtZXhjbGFtYXRpb24gdGV4dC1hbWJlci00MDAgdGV4dC1sZyI7CiAgICAgIH0KCiAgICAgIHRvYXN0Qm94LmNsYXNzTGlzdC5yZW1vdmUoJ3RyYW5zbGF0ZS15LTIwJywgJ29wYWNpdHktMCcsICdwb2ludGVyLWV2ZW50cy1ub25lJyk7CiAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgIHRvYXN0Qm94LmNsYXNzTGlzdC5hZGQoJ3RyYW5zbGF0ZS15LTIwJywgJ29wYWNpdHktMCcsICdwb2ludGVyLWV2ZW50cy1ub25lJyk7CiAgICAgIH0sIDQwMDApOwogICAgfQoKICAgIGZ1bmN0aW9uIHNob3dTbXNTaW11bGF0aW9uKG90cCkgewogICAgICBjb25zdCBzbXMgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc21zTm90aWZpY2F0aW9uJyk7CiAgICAgIGNvbnN0IHNtc0JvZHkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc21zQm9keScpOwogICAgICBjb25zdCBzbXNUaW1lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Ntc1RpbWUnKTsKCiAgICAgIHNtc0JvZHkuaW5uZXJIVE1MID0gYOCkqOCksiDgpJzgpLIg4KSv4KWL4KSc4KSo4KS+IOCkuOCkpOCljeCkr+CkvuCkquCkqCBPVFAg4KSV4KWL4KShIDxzcGFuIGNsYXNzPSJmb250LW1vbm8gZm9udC1ib2xkIHRleHQtYW1iZXItMzAwIHRleHQtYmFzZSI+JHtvdHB9PC9zcGFuPiDgpLngpYjgpaQg4KSv4KS5IDEwIOCkruCkv+CkqOCknyDgpJXgpYcg4KSy4KS/4KSPIOCkruCkvuCkqOCljeCkryDgpLngpYjgpaQg4KSV4KS/4KS44KWAIOCkuOClhyDgpLjgpL7gpJ3gpL4g4KSoIOCkleCksOClh+CkguClpGA7CiAgICAgIHNtc1RpbWUudGV4dENvbnRlbnQgPSBuZXcgRGF0ZSgpLnRvTG9jYWxlVGltZVN0cmluZyhbXSwge2hvdXI6ICcyLWRpZ2l0JywgbWludXRlOicyLWRpZ2l0J30pOwoKICAgICAgc21zLmNsYXNzTGlzdC5yZW1vdmUoJ3RyYW5zbGF0ZS15LVstMTUwJV0nLCAnb3BhY2l0eS0wJywgJ3BvaW50ZXItZXZlbnRzLW5vbmUnKTsKICAgICAgc21zLmNsYXNzTGlzdC5hZGQoJ3BvaW50ZXItZXZlbnRzLWF1dG8nKTsKCiAgICAgIC8vIFVwZGF0ZSBiYWRnZSBpbiBtb2RhbCBpZiBwcmVzZW50CiAgICAgIGNvbnN0IGJhZGdlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwT3RwRGlzcGxheUJhZGdlJyk7CiAgICAgIGlmIChiYWRnZSkgewogICAgICAgIGJhZGdlLnRleHRDb250ZW50ID0gb3RwOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gYXV0b0ZpbGxDdXJyZW50T3RwKCkgewogICAgICBpZiAoZ2VuZXJhdGVkT3RwKSB7CiAgICAgICAgY29uc3Qgb3RwSW5wdXQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZnBPdHBJbnB1dCcpOwogICAgICAgIGlmIChvdHBJbnB1dCkgewogICAgICAgICAgb3RwSW5wdXQudmFsdWUgPSBnZW5lcmF0ZWRPdHA7CiAgICAgICAgICBzaG93VG9hc3QoIk9UUCDgpLjgpY3gpLXgpKTgpIMg4KSt4KSwIOCkpuCkv+Ckr+CkviDgpJfgpK/gpL4g4KS54KWIISIpOwogICAgICAgIH0KICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGNvcHlDdXJyZW50T3RwKCkgewogICAgICBpZiAoZ2VuZXJhdGVkT3RwKSB7CiAgICAgICAgY29uc3QgZHVtbXkgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJpbnB1dCIpOwogICAgICAgIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoZHVtbXkpOwogICAgICAgIGR1bW15LnZhbHVlID0gZ2VuZXJhdGVkT3RwOwogICAgICAgIGR1bW15LnNlbGVjdCgpOwogICAgICAgIGRvY3VtZW50LmV4ZWNDb21tYW5kKCJjb3B5Iik7CiAgICAgICAgZG9jdW1lbnQuYm9keS5yZW1vdmVDaGlsZChkdW1teSk7CiAgICAgICAgc2hvd1RvYXN0KCJPVFAg4KSV4KWN4KSy4KS/4KSq4KSs4KWL4KSw4KWN4KShIOCkquCksCDgpJXgpYngpKrgpYAg4KSV4KS/4KSv4KS+IOCkl+Ckr+CkviEiKTsKICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGNsb3NlU21zQWxlcnQoKSB7CiAgICAgIGNvbnN0IHNtcyA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzbXNOb3RpZmljYXRpb24nKTsKICAgICAgc21zLmNsYXNzTGlzdC5hZGQoJ3RyYW5zbGF0ZS15LVstMTUwJV0nLCAnb3BhY2l0eS0wJywgJ3BvaW50ZXItZXZlbnRzLW5vbmUnKTsKICAgICAgc21zLmNsYXNzTGlzdC5yZW1vdmUoJ3BvaW50ZXItZXZlbnRzLWF1dG8nKTsKICAgIH0KCiAgICBmdW5jdGlvbiBjbG9zZVNtc0FsZXJ0KCkgewogICAgICBjb25zdCBzbXMgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc21zTm90aWZpY2F0aW9uJyk7CiAgICAgIHNtcy5jbGFzc0xpc3QuYWRkKCd0cmFuc2xhdGUteS1bLTE1MCVdJywgJ29wYWNpdHktMCcsICdwb2ludGVyLWV2ZW50cy1ub25lJyk7CiAgICB9CgogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgLy8gTkFWSUdBVElPTiAmIFZJRVcgU1dJVENISU5HCiAgICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICBmdW5jdGlvbiBzaG93U2VjdGlvbihzZWN0aW9uKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzZWN0aW9uSG9tZScpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2VjdGlvbkNpdGl6ZW4nKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NlY3Rpb25BZG1pbicpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwoKICAgICAgaWYgKHNlY3Rpb24gPT09ICdob21lJykgewogICAgICAgIGlmIChjdXJyZW50VXNlciAmJiBjdXJyZW50VXNlci5yb2xlID09PSAnY2l0aXplbicpIHsgc2VjdGlvbiA9ICdjaXRpemVuJzsgfQogICAgICAgIGVsc2UgaWYgKGN1cnJlbnRVc2VyICYmIGN1cnJlbnRVc2VyLnJvbGUgPT09ICdhZG1pbicpIHsgc2VjdGlvbiA9ICdhZG1pbic7IH0KICAgICAgfQogICAgICBpZiAoc2VjdGlvbiA9PT0gJ2hvbWUnKSB7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NlY3Rpb25Ib21lJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgICAgd2luZG93LnNjcm9sbFRvKHt0b3A6IDAsIGJlaGF2aW9yOiAnc21vb3RoJ30pOwogICAgICB9IGVsc2UgaWYgKHNlY3Rpb24gPT09ICdjaXRpemVuJykgewogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzZWN0aW9uQ2l0aXplbicpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICAgIHJlbmRlckNpdGl6ZW5EYXNoYm9hcmQoKTsKICAgICAgICB3aW5kb3cuc2Nyb2xsVG8oe3RvcDogMCwgYmVoYXZpb3I6ICdzbW9vdGgnfSk7CiAgICAgIH0gZWxzZSBpZiAoc2VjdGlvbiA9PT0gJ2FkbWluJykgewogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzZWN0aW9uQWRtaW4nKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgICByZW5kZXJBZG1pbkRhc2hib2FyZCgpOwogICAgICAgIHdpbmRvdy5zY3JvbGxUbyh7dG9wOiAwLCBiZWhhdmlvcjogJ3Ntb290aCd9KTsKICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIHNjcm9sbFRvRmVhdHVyZXMoKSB7CiAgICAgIHNob3dTZWN0aW9uKCdob21lJyk7CiAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgIGNvbnN0IGVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZlYXR1cmVzU2VjdGlvbicpOwogICAgICAgIGlmIChlbCkgZWwuc2Nyb2xsSW50b1ZpZXcoeyBiZWhhdmlvcjogJ3Ntb290aCcgfSk7CiAgICAgIH0sIDEwMCk7CiAgICB9CgogICAgZnVuY3Rpb24gdG9nZ2xlTW9iaWxlTWVudSgpIHsKICAgICAgY29uc3QgbSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2JpbGVNZW51Jyk7CiAgICAgIG0uY2xhc3NMaXN0LnRvZ2dsZSgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gdG9nZ2xlTGFuZygpIHsKICAgICAgc2hvd1RvYXN0KCLgpK3gpL7gpLfgpL4g4KS14KS/4KSV4KSy4KWN4KSqOiDgpKrgpYvgpLDgpY3gpJ/gpLIg4KS14KSw4KWN4KSk4KSu4KS+4KSoIOCkruClh+CkgiDgpLngpL/gpKjgpY3gpKbgpYAg4KSP4KS14KSCIOCkheCkguCkl+CljeCksOClh+CknOClgCDgpKbgpY3gpLXgpL/gpK3gpL7gpLfgpYAg4KSu4KWL4KShIOCkruClh+CkgiDgpIngpKrgpLLgpKzgpY3gpKcg4KS54KWI4KWkIik7CiAgICB9CgogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgLy8gQVVUSCBNT0RBTCAmIExPR0lDCiAgICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICBmdW5jdGlvbiBvcGVuQXV0aE1vZGFsKHJvbGUgPSAnY2l0aXplbicsIG1vZGUgPSAnbG9naW4nKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhdXRoTW9kYWwnKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgc3dpdGNoQXV0aFJvbGUocm9sZSk7CiAgICAgIHNldEF1dGhNb2RlKG1vZGUpOwogICAgfQoKICAgIGZ1bmN0aW9uIGNsb3NlQXV0aE1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXV0aE1vZGFsJykuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gc3dpdGNoQXV0aFJvbGUocm9sZSkgewogICAgICBjdXJyZW50QXV0aFJvbGUgPSByb2xlOwogICAgICBjb25zdCBjaXRpemVuQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JvbGVUYWJDaXRpemVuJyk7CiAgICAgIGNvbnN0IGFkbWluQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JvbGVUYWJBZG1pbicpOwogICAgICBjb25zdCBzd2l0Y2hlciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaXRpemVuTW9kZVN3aXRjaGVyJyk7CiAgICAgIGNvbnN0IHRpdGxlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2F1dGhNb2RhbFRpdGxlJyk7CiAgICAgIGNvbnN0IHN1YiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhdXRoTW9kYWxTdWInKTsKCiAgICAgIGNvbnN0IGNpdExvZ0Zvcm0gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZm9ybUNpdGl6ZW5Mb2dpbicpOwogICAgICBjb25zdCBjaXRSZWdGb3JtID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Zvcm1DaXRpemVuUmVnaXN0ZXInKTsKICAgICAgY29uc3QgYWRtTG9nRm9ybSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmb3JtQWRtaW5Mb2dpbicpOwoKICAgICAgaWYgKHJvbGUgPT09ICdjaXRpemVuJykgewogICAgICAgIGNpdGl6ZW5CdG4uY2xhc3NOYW1lID0gImZsZXgtMSBweS0xLjUgdGV4dC14cyBmb250LWJvbGQgcm91bmRlZC1sZyB0cmFuc2l0aW9uIGJnLXdoaXRlIHRleHQtamFsLTkwMCBzaGFkb3ciOwogICAgICAgIGFkbWluQnRuLmNsYXNzTmFtZSA9ICJmbGV4LTEgcHktMS41IHRleHQteHMgZm9udC1ib2xkIHJvdW5kZWQtbGcgdHJhbnNpdGlvbiB0ZXh0LXdoaXRlLzgwIGhvdmVyOnRleHQtd2hpdGUiOwogICAgICAgIHN3aXRjaGVyLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICAgIHRpdGxlLnRleHRDb250ZW50ID0gIuCkqOCkvuCkl+CksOCkv+CklSDgpKrgpY3gpLDgpLXgpYfgpLYg4KSm4KWN4KS14KS+4KSwIjsKICAgICAgICBzdWIudGV4dENvbnRlbnQgPSAiTmFsIEphbCBZb2phbmEgQ2l0aXplbiBQb3J0YWwiOwoKICAgICAgICBhZG1Mb2dGb3JtLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICAgIHNldEF1dGhNb2RlKGN1cnJlbnRBdXRoTW9kZSk7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgYWRtaW5CdG4uY2xhc3NOYW1lID0gImZsZXgtMSBweS0xLjUgdGV4dC14cyBmb250LWJvbGQgcm91bmRlZC1sZyB0cmFuc2l0aW9uIGJnLXdoaXRlIHRleHQtamFsLTkwMCBzaGFkb3ciOwogICAgICAgIGNpdGl6ZW5CdG4uY2xhc3NOYW1lID0gImZsZXgtMSBweS0xLjUgdGV4dC14cyBmb250LWJvbGQgcm91bmRlZC1sZyB0cmFuc2l0aW9uIHRleHQtd2hpdGUvODAgaG92ZXI6dGV4dC13aGl0ZSI7CiAgICAgICAgc3dpdGNoZXIuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICAgICAgdGl0bGUudGV4dENvbnRlbnQgPSAi4KS14KS/4KSt4KS+4KSX4KWA4KSvIOCkheCkp+Ckv+CkleCkvuCksOClgCDgpLLgpYngpJfgpL/gpKgiOwogICAgICAgIHN1Yi50ZXh0Q29udGVudCA9ICJBZG1pbmlzdHJhdGl2ZSBDb250cm9sIFN5c3RlbSI7CgogICAgICAgIGNpdExvZ0Zvcm0uY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICAgICAgY2l0UmVnRm9ybS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgICBhZG1Mb2dGb3JtLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gc2V0QXV0aE1vZGUobW9kZSkgewogICAgICBjdXJyZW50QXV0aE1vZGUgPSBtb2RlOwogICAgICBjb25zdCB0YWJMb2dpbiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtb2RlVGFiTG9naW4nKTsKICAgICAgY29uc3QgdGFiUmVnaXN0ZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbW9kZVRhYlJlZ2lzdGVyJyk7CiAgICAgIGNvbnN0IGZvcm1Mb2cgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZm9ybUNpdGl6ZW5Mb2dpbicpOwogICAgICBjb25zdCBmb3JtUmVnID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Zvcm1DaXRpemVuUmVnaXN0ZXInKTsKCiAgICAgIGlmIChtb2RlID09PSAnbG9naW4nKSB7CiAgICAgICAgdGFiTG9naW4uY2xhc3NOYW1lID0gImZsZXgtMSBwYi0xIHRleHQtc20gZm9udC1ib2xkIGJvcmRlci1iLTIgYm9yZGVyLWphbC02MDAgdGV4dC1qYWwtNzAwIjsKICAgICAgICB0YWJSZWdpc3Rlci5jbGFzc05hbWUgPSAiZmxleC0xIHBiLTEgdGV4dC1zbSBmb250LWJvbGQgYm9yZGVyLWItMiBib3JkZXItdHJhbnNwYXJlbnQgdGV4dC1zbGF0ZS00MDAgaG92ZXI6dGV4dC1zbGF0ZS03MDAiOwogICAgICAgIGZvcm1Mb2cuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgICAgZm9ybVJlZy5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgfSBlbHNlIHsKICAgICAgICB0YWJSZWdpc3Rlci5jbGFzc05hbWUgPSAiZmxleC0xIHBiLTEgdGV4dC1zbSBmb250LWJvbGQgYm9yZGVyLWItMiBib3JkZXItamFsLTYwMCB0ZXh0LWphbC03MDAiOwogICAgICAgIHRhYkxvZ2luLmNsYXNzTmFtZSA9ICJmbGV4LTEgcGItMSB0ZXh0LXNtIGZvbnQtYm9sZCBib3JkZXItYi0yIGJvcmRlci10cmFuc3BhcmVudCB0ZXh0LXNsYXRlLTQwMCBob3Zlcjp0ZXh0LXNsYXRlLTcwMCI7CiAgICAgICAgZm9ybVJlZy5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgICBmb3JtTG9nLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gaGFuZGxlQ2l0aXplblJlZ2lzdGVyKGUpIHsKICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICBjb25zdCBuYW1lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ05hbWUnKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IGZhdGhlck5hbWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVnRmF0aGVyTmFtZScpLnZhbHVlLnRyaW0oKTsKICAgICAgY29uc3QgZG9iID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ0RvYicpLnZhbHVlOwogICAgICBjb25zdCBhYWRoYWFyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ0FhZGhhYXInKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IGhvdXNlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ0hvdXNlJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBibG9jayA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdCbG9jaycpLnZhbHVlLnRyaW0oKTsKICAgICAgY29uc3QgdmlsbGFnZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdWaWxsYWdlJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBjaXR5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ0NpdHknKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IHBpbmNvZGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVnUGluY29kZScpLnZhbHVlLnRyaW0oKTsKICAgICAgY29uc3QgcGFuY2hheWF0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlZ1BhbmNoYXlhdCcpLnZhbHVlLnRyaW0oKTsKICAgICAgY29uc3Qgd2FyZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdXYXJkJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBtb2JpbGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVnTW9iaWxlJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBlbWFpbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdFbWFpbCcpLnZhbHVlLnRyaW0oKSB8fCBgJHttb2JpbGV9QG5hbGphbC51c2VyYDsKICAgICAgY29uc3QgcGFzcyA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdQYXNzJykudmFsdWU7CgogICAgICBjb25zdCBjaXRpemVucyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQ0lUSVpFTlMpIHx8ICdbXScpOwogICAgICBjb25zdCBleGlzdHMgPSBjaXRpemVucy5maW5kKGMgPT4gYy5tb2JpbGUgPT09IG1vYmlsZSk7CiAgICAgIGlmIChleGlzdHMpIHsKICAgICAgICBzaG93VG9hc3QoIuCkr+CkuSDgpK7gpYvgpKzgpL7gpIfgpLIg4KSo4KSC4KSs4KSwIOCkquCkueCksuClhyDgpLjgpYcg4KSq4KSC4KSc4KWA4KSV4KWD4KSkIOCkueCliCEg4KSV4KWD4KSq4KSv4KS+IOCksuClieCkl+Ckv+CkqCDgpJXgpLDgpYfgpILgpaQiLCBmYWxzZSk7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICBjb25zdCBuZXdDaXRpemVuID0gewogICAgICAgIGlkOiAnTkotMjAyNi0nICsgTWF0aC5mbG9vcigxMDAwICsgTWF0aC5yYW5kb20oKSAqIDkwMDApLAogICAgICAgIG5hbWUsCiAgICAgICAgZmF0aGVyTmFtZSwgZG9iLCBhYWRoYWFyLCBob3VzZSwgYmxvY2ssIHZpbGxhZ2UsIGNpdHksIHBpbmNvZGUsCiAgICAgICAgYWRkcmVzczogYOCkruCkleCkvuCkqCAke2hvdXNlfSwg4KSs4KWN4KSy4KWJ4KSVICR7YmxvY2t9LCDgpJfgpY3gpLDgpL7gpK4gJHt2aWxsYWdlfSwg4KSq4KSC4KSa4KS+4KSv4KSkICR7cGFuY2hheWF0fSwgJHtjaXR5fSAtICR7cGluY29kZX1gLAogICAgICAgIHBhbmNoYXlhdCwKICAgICAgICB3YXJkOiB3YXJkLnBhZFN0YXJ0KDIsICcwJyksCiAgICAgICAgbW9iaWxlLAogICAgICAgIGVtYWlsLAogICAgICAgIHBhc3N3b3JkOiBwYXNzCiAgICAgIH07CgogICAgICBjaXRpemVucy5wdXNoKG5ld0NpdGl6ZW4pOwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShTVE9SQUdFX0tFWV9DSVRJWkVOUywgSlNPTi5zdHJpbmdpZnkoY2l0aXplbnMpKTsKCiAgICAgIC8vIEF1dG8gbG9naW4KICAgICAgc2V0U2Vzc2lvbignY2l0aXplbicsIG5ld0NpdGl6ZW4pOwogICAgICBjbG9zZUF1dGhNb2RhbCgpOwogICAgICBzaG93VG9hc3QoYOCkquCkguCknOClgOCkleCksOCkoyDgpLjgpKvgpLIhIOCkuOCljeCkteCkvuCkl+CkpCDgpLngpYgsICR7bmV3Q2l0aXplbi5uYW1lfWApOwogICAgICBzaG93U2VjdGlvbignY2l0aXplbicpOwogICAgfQoKICAgIGZ1bmN0aW9uIGhhbmRsZUNpdGl6ZW5Mb2dpbihlKSB7CiAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgY29uc3QgbW9iaWxlT3JFbWFpbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaXRMb2dNb2JpbGUnKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IHBhc3MgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0TG9nUGFzcycpLnZhbHVlOwoKICAgICAgY29uc3QgY2l0aXplbnMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0NJVElaRU5TKSB8fCAnW10nKTsKICAgICAgY29uc3QgY2l0aXplbiA9IGNpdGl6ZW5zLmZpbmQoYyA9PiAoYy5tb2JpbGUgPT09IG1vYmlsZU9yRW1haWwgfHwgYy5lbWFpbCA9PT0gbW9iaWxlT3JFbWFpbCkgJiYgYy5wYXNzd29yZCA9PT0gcGFzcyk7CgogICAgICBpZiAoY2l0aXplbikgewogICAgICAgIHNldFNlc3Npb24oJ2NpdGl6ZW4nLCBjaXRpemVuKTsKICAgICAgICBjbG9zZUF1dGhNb2RhbCgpOwogICAgICAgIHNob3dUb2FzdChg4KS44KSr4KSy4KSk4KS+4KSq4KWC4KSw4KWN4KS14KSVIOCksuClieCkl+Ckv+CkqCDgpLngpYHgpIYhIOCkuOCljeCkteCkvuCkl+CkpCDgpLngpYgsICR7Y2l0aXplbi5uYW1lfWApOwogICAgICAgIHNob3dTZWN0aW9uKCdjaXRpemVuJyk7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgc2hvd1RvYXN0KCLgpIXgpK7gpL7gpKjgpY3gpK8g4KSu4KWL4KSs4KS+4KSH4KSyIOCkqOCkguCkrOCksCDgpK/gpL4g4KSq4KS+4KS44KS14KSw4KWN4KShISDgpKrgpYHgpKjgpIMg4KSq4KWN4KSw4KSv4KS+4KS4IOCkleCksOClh+CkguClpCIsIGZhbHNlKTsKICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGhhbmRsZUFkbWluTG9naW4oZSkgewogICAgICBlLnByZXZlbnREZWZhdWx0KCk7CiAgICAgIGNvbnN0IGVtYWlsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FkbUVtYWlsJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBwYXNzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FkbVBhc3MnKS52YWx1ZTsKCiAgICAgIC8vIERlZmF1bHQgaGFyZGNvZGVkIGFkbWluIG9yIGR5bmFtaWMKICAgICAgaWYgKChlbWFpbCA9PT0gJ2FkbWluQG5hbGphbC5nb3YuaW4nIHx8IGVtYWlsID09PSAnYWRtaW4nKSAmJiAocGFzcyA9PT0gJ2FkbWluMTIzJyB8fCBwYXNzID09PSAnYWRtaW4nKSkgewogICAgICAgIGNvbnN0IGFkbWluVXNlciA9IHsKICAgICAgICAgIHJvbGU6ICdhZG1pbicsCiAgICAgICAgICBlbWFpbDogJ2FkbWluQG5hbGphbC5nb3YuaW4nLAogICAgICAgICAgbmFtZTogJ+CkteCkv+CkreCkvuCkl+ClgOCkryDgpKjgpYvgpKHgpLIg4KSF4KSn4KS/4KSV4KS+4KSw4KWAJywKICAgICAgICAgIGRpdmlzaW9uOiAn4KS44KSm4KSwIOCkl+CljeCksOCkvuCkruClgOCkoyDgpK7gpILgpKHgpLInCiAgICAgICAgfTsKICAgICAgICBzZXRTZXNzaW9uKCdhZG1pbicsIGFkbWluVXNlcik7CiAgICAgICAgY2xvc2VBdXRoTW9kYWwoKTsKICAgICAgICBzaG93VG9hc3QoIuCkteCkv+CkreCkvuCkl+ClgOCkryDgpI/gpKHgpK7gpL/gpKgg4KSq4KWL4KSw4KWN4KSf4KSyIOCkruClh+CkgiDgpLjgpY3gpLXgpL7gpJfgpKQg4KS54KWIISIpOwogICAgICAgIHNob3dTZWN0aW9uKCdhZG1pbicpOwogICAgICB9IGVsc2UgewogICAgICAgIHNob3dUb2FzdCgi4KSP4KSh4KSu4KS/4KSoIOCkleCljeCksOClh+CkoeClh+CkguCktuCkv+Ckr+CksuCljeCkuCDgpIXgpK7gpL7gpKjgpY3gpK8g4KS54KWI4KSCISDgpKHgpYfgpK7gpYs6IGFkbWluQG5hbGphbC5nb3YuaW4gLyBhZG1pbjEyMyIsIGZhbHNlKTsKICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGZpbGxEZW1vQW5kTG9naW4odHlwZSkgewogICAgICBpZiAodHlwZSA9PT0gJ2NpdGl6ZW4nKSB7CiAgICAgICAgY29uc3QgY2l0aXplbnMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0NJVElaRU5TKSB8fCAnW10nKTsKICAgICAgICBjb25zdCBkZW1vID0gY2l0aXplbnNbMF0gfHwgewogICAgICAgICAgaWQ6ICdOSi0yMDI0LTg4NDEnLAogICAgICAgICAgbmFtZTogJ+CksOCkvuCkriDgpJXgpYHgpK7gpL7gpLAnLAogICAgICAgICAgbW9iaWxlOiAnOTg3NjU0MzIxMCcsCiAgICAgICAgICBwYW5jaGF5YXQ6ICfgpLDgpL7gpK7gpKrgpYHgpLAnLAogICAgICAgICAgd2FyZDogJzA0JwogICAgICAgIH07CiAgICAgICAgc2V0U2Vzc2lvbignY2l0aXplbicsIGRlbW8pOwogICAgICAgIGNsb3NlQXV0aE1vZGFsKCk7CiAgICAgICAgc2hvd1RvYXN0KCLgpKjgpL7gpJfgpLDgpL/gpJUg4KSh4KWH4KSu4KWLIOCkquCljeCksOCli+Ckq+CkvuCkh+CksiDgpLjgpJXgpY3gpLDgpL/gpK8g4KSV4KS/4KSv4KS+IOCkl+Ckr+CkviEiKTsKICAgICAgICBzaG93U2VjdGlvbignY2l0aXplbicpOwogICAgICB9IGVsc2UgewogICAgICAgIGNvbnN0IGRlbW9BZG1pbiA9IHsKICAgICAgICAgIHJvbGU6ICdhZG1pbicsCiAgICAgICAgICBlbWFpbDogJ2FkbWluQG5hbGphbC5nb3YuaW4nLAogICAgICAgICAgbmFtZTogJ+CkteCkv+CkreCkvuCkl+ClgOCkryDgpKjgpYvgpKHgpLIg4KSF4KSn4KS/4KSV4KS+4KSw4KWAJywKICAgICAgICAgIGRpdmlzaW9uOiAn4KS44KSm4KSwIOCkl+CljeCksOCkvuCkruClgOCkoyDgpK7gpILgpKHgpLInCiAgICAgICAgfTsKICAgICAgICBzZXRTZXNzaW9uKCdhZG1pbicsIGRlbW9BZG1pbik7CiAgICAgICAgY2xvc2VBdXRoTW9kYWwoKTsKICAgICAgICBzaG93VG9hc3QoIuCkteCkv+CkreCkvuCkl+ClgOCkryDgpI/gpKHgpK7gpL/gpKgg4KSq4KWL4KSw4KWN4KSf4KSyIOCkruClh+CkgiDgpLjgpY3gpLXgpL7gpJfgpKQg4KS54KWIISIpOwogICAgICAgIHNob3dTZWN0aW9uKCdhZG1pbicpOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gc2V0U2Vzc2lvbihyb2xlLCB1c2VyT2JqKSB7CiAgICAgIGN1cnJlbnRVc2VyID0geyByb2xlLCBkYXRhOiB1c2VyT2JqIH07CiAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0NVUlJFTlRfVVNFUiwgSlNPTi5zdHJpbmdpZnkoY3VycmVudFVzZXIpKTsKICAgICAgdXBkYXRlTmF2VUkoKTsKICAgIH0KCiAgICBmdW5jdGlvbiBjaGVja1NhdmVkU2Vzc2lvbigpIHsKICAgICAgY29uc3Qgc2F2ZWQgPSBsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9DVVJSRU5UX1VTRVIpOwogICAgICBpZiAoc2F2ZWQpIHsKICAgICAgICB0cnkgewogICAgICAgICAgY3VycmVudFVzZXIgPSBKU09OLnBhcnNlKHNhdmVkKTsKICAgICAgICAgIHVwZGF0ZU5hdlVJKCk7CiAgICAgICAgfSBjYXRjaChlcnIpIHsKICAgICAgICAgIGN1cnJlbnRVc2VyID0gbnVsbDsKICAgICAgICB9CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBsb2dvdXQoKSB7CiAgICAgIGN1cnJlbnRVc2VyID0gbnVsbDsKICAgICAgbG9jYWxTdG9yYWdlLnJlbW92ZUl0ZW0oU1RPUkFHRV9LRVlfQ1VSUkVOVF9VU0VSKTsKICAgICAgdXBkYXRlTmF2VUkoKTsKICAgICAgc2hvd1RvYXN0KCLgpIbgpKog4KS44KSr4KSy4KSk4KS+4KSq4KWC4KSw4KWN4KS14KSVIOCksuClieCklyDgpIbgpIngpJ8g4KS54KWLIOCkmuClgeCkleClhyDgpLngpYjgpILgpaQiKTsKICAgICAgc2hvd1NlY3Rpb24oJ2hvbWUnKTsKICAgIH0KCiAgICBmdW5jdGlvbiB1cGRhdGVOYXZVSSgpIHsKICAgICAgY29uc3QgYXV0aEJ0bnMgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXV0aE5hdkJ1dHRvbnMnKTsKICAgICAgY29uc3QgdXNlclBpbGwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndXNlclByb2ZpbGVQaWxsJyk7CiAgICAgIGNvbnN0IG5hdlVzZXJOYW1lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25hdlVzZXJOYW1lJyk7CiAgICAgIGNvbnN0IG5hdlVzZXJSb2xlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25hdlVzZXJSb2xlJyk7CiAgICAgIGNvbnN0IG5hdkluaXRpYWxzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25hdkF2YXRhckluaXRpYWxzJyk7CgogICAgICBpZiAoY3VycmVudFVzZXIpIHsKICAgICAgICBhdXRoQnRucy5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgICB1c2VyUGlsbC5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgICB1c2VyUGlsbC5jbGFzc0xpc3QuYWRkKCdmbGV4Jyk7CgogICAgICAgIGlmIChjdXJyZW50VXNlci5yb2xlID09PSAnY2l0aXplbicpIHsKICAgICAgICAgIG5hdlVzZXJOYW1lLnRleHRDb250ZW50ID0gY3VycmVudFVzZXIuZGF0YS5uYW1lOwogICAgICAgICAgbmF2VXNlclJvbGUudGV4dENvbnRlbnQgPSBg4KSo4KS+4KSX4KSw4KS/4KSVICjgpLXgpL7gpLDgpY3gpKEgJHtjdXJyZW50VXNlci5kYXRhLndhcmQgfHwgJzAxJ30pYDsKICAgICAgICAgIG5hdkluaXRpYWxzLnRleHRDb250ZW50ID0gY3VycmVudFVzZXIuZGF0YS5uYW1lLnN1YnN0cmluZygwLCAyKS50b1VwcGVyQ2FzZSgpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICBuYXZVc2VyTmFtZS50ZXh0Q29udGVudCA9ICLgpLXgpL/gpK3gpL7gpJfgpYDgpK8g4KSP4KSh4KSu4KS/4KSoIjsKICAgICAgICAgIG5hdlVzZXJSb2xlLnRleHRDb250ZW50ID0gIuCkqOCli+CkoeCksiDgpIXgpKfgpL/gpJXgpL7gpLDgpYAiOwogICAgICAgICAgbmF2SW5pdGlhbHMudGV4dENvbnRlbnQgPSAiQUQiOwogICAgICAgIH0KICAgICAgfSBlbHNlIHsKICAgICAgICBhdXRoQnRucy5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgICB1c2VyUGlsbC5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgICB1c2VyUGlsbC5jbGFzc0xpc3QucmVtb3ZlKCdmbGV4Jyk7CiAgICAgIH0KICAgIH0KCiAgICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICAvLyBGT1JHT1QgUEFTU1dPUkQgT1RQIEVOR0lORQogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgZnVuY3Rpb24gc3RhcnRGb3Jnb3RQYXNzd29yZEZsb3coKSB7CiAgICAgIGNsb3NlQXV0aE1vZGFsKCk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmb3Jnb3RQYXNzd29yZE1vZGFsJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmb3Jnb3RTdGVwMScpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZm9yZ290U3RlcDInKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwTW9iaWxlSW5wdXQnKS52YWx1ZSA9ICcnOwogICAgfQoKICAgIGZ1bmN0aW9uIGNsb3NlRm9yZ290TW9kYWwoKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmb3Jnb3RQYXNzd29yZE1vZGFsJykuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICAgIGlmIChvdHBDb3VudGRvd25JbnRlcnZhbCkgY2xlYXJJbnRlcnZhbChvdHBDb3VudGRvd25JbnRlcnZhbCk7CiAgICB9CgogICAgZnVuY3Rpb24gc2VuZEZvcmdvdE90cCgpIHsKICAgICAgY29uc3QgbW9iaWxlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwTW9iaWxlSW5wdXQnKS52YWx1ZS50cmltKCk7CiAgICAgIGlmICghbW9iaWxlIHx8IG1vYmlsZS5sZW5ndGggPCAxMCkgewogICAgICAgIHNob3dUb2FzdCgi4KSV4KWD4KSq4KSv4KS+IDEwIOCkheCkguCkleCli+CkgiDgpJXgpL4g4KSu4KS+4KSo4KWN4KSvIOCkruCli+CkrOCkvuCkh+CksiDgpKjgpILgpKzgpLAg4KSm4KSw4KWN4KScIOCkleCksOClh+CkgiEiLCBmYWxzZSk7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICBjb25zdCBjaXRpemVucyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQ0lUSVpFTlMpIHx8ICdbXScpOwogICAgICBsZXQgdXNlciA9IGNpdGl6ZW5zLmZpbmQoYyA9PiBjLm1vYmlsZSA9PT0gbW9iaWxlKTsKICAgICAgCiAgICAgIGlmICghdXNlcikgewogICAgICAgIHVzZXIgPSB7CiAgICAgICAgICBpZDogJ05KLTIwMjQtODg0MScsCiAgICAgICAgICBuYW1lOiAn4KSo4KS+4KSX4KSw4KS/4KSVIOCkieCkquCkreCli+CkleCljeCkpOCkvicsCiAgICAgICAgICBtb2JpbGU6IG1vYmlsZSwKICAgICAgICAgIHBhbmNoYXlhdDogJ+CksOCkvuCkruCkquClgeCksCcsCiAgICAgICAgICB3YXJkOiAnMDQnLAogICAgICAgICAgcGFzc3dvcmQ6ICdwYXNzd29yZDEyMycKICAgICAgICB9OwogICAgICAgIGNpdGl6ZW5zLnB1c2godXNlcik7CiAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVlfQ0lUSVpFTlMsIEpTT04uc3RyaW5naWZ5KGNpdGl6ZW5zKSk7CiAgICAgIH0KCiAgICAgIC8vIEdlbmVyYXRlIDYgZGlnaXQgT1RQCiAgICAgIGdlbmVyYXRlZE90cCA9IE1hdGguZmxvb3IoMTAwMDAwICsgTWF0aC5yYW5kb20oKSAqIDkwMDAwMCkudG9TdHJpbmcoKTsKICAgICAgCiAgICAgIC8vIFN0ZXAgdHJhbnNpdGlvbgogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZm9yZ290U3RlcDEnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZvcmdvdFN0ZXAyJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmcFNlbnRUYXJnZXQnKS50ZXh0Q29udGVudCA9IG1vYmlsZTsKCiAgICAgIC8vIFRyaWdnZXIgcmVhbGlzdGljIFNNUyBub3RpZmljYXRpb24KICAgICAgc2hvd1Ntc1NpbXVsYXRpb24oZ2VuZXJhdGVkT3RwKTsKICAgICAgc2hvd1RvYXN0KGDgpLjgpYHgpLDgpJXgpY3gpLfgpL/gpKQgNi3gpIXgpILgpJXgpYDgpK8gT1RQIOCkuOCljeCkleCljeCksOClgOCkqCDgpKrgpLAg4KSt4KWH4KSc4KS+IOCkl+Ckr+CkviDgpLngpYg6ICR7Z2VuZXJhdGVkT3RwfWApOwoKICAgICAgLy8gU3RhcnQgNjBzIGNvdW50ZG93bgogICAgICBsZXQgdGltZUxlZnQgPSA2MDsKICAgICAgY29uc3QgdGltZXJEaXNwbGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwVGltZXInKTsKICAgICAgY29uc3QgcmVzZW5kQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwUmVzZW5kQnRuJyk7CiAgICAgIGlmIChyZXNlbmRCdG4pIHJlc2VuZEJ0bi5jbGFzc0xpc3QuYWRkKCdwb2ludGVyLWV2ZW50cy1ub25lJywgJ29wYWNpdHktNTAnKTsKCiAgICAgIGlmIChvdHBDb3VudGRvd25JbnRlcnZhbCkgY2xlYXJJbnRlcnZhbChvdHBDb3VudGRvd25JbnRlcnZhbCk7CgogICAgICBvdHBDb3VudGRvd25JbnRlcnZhbCA9IHNldEludGVydmFsKCgpID0+IHsKICAgICAgICB0aW1lTGVmdC0tOwogICAgICAgIGNvbnN0IG0gPSBNYXRoLmZsb29yKHRpbWVMZWZ0IC8gNjApLnRvU3RyaW5nKCkucGFkU3RhcnQoMiwgJzAnKTsKICAgICAgICBjb25zdCBzID0gKHRpbWVMZWZ0ICUgNjApLnRvU3RyaW5nKCkucGFkU3RhcnQoMiwgJzAnKTsKICAgICAgICB0aW1lckRpc3BsYXkudGV4dENvbnRlbnQgPSBgJHttfToke3N9YDsKICAgICAgICBpZiAodGltZUxlZnQgPD0gMCkgewogICAgICAgICAgY2xlYXJJbnRlcnZhbChvdHBDb3VudGRvd25JbnRlcnZhbCk7CiAgICAgICAgICB0aW1lckRpc3BsYXkudGV4dENvbnRlbnQgPSAi4KS44KSu4KSvIOCkuOCkruCkvuCkquCljeCkpCAoRXhwaXJlZCkiOwogICAgICAgICAgaWYgKHJlc2VuZEJ0bikgcmVzZW5kQnRuLmNsYXNzTGlzdC5yZW1vdmUoJ3BvaW50ZXItZXZlbnRzLW5vbmUnLCAnb3BhY2l0eS01MCcpOwogICAgICAgIH0KICAgICAgfSwgMTAwMCk7CiAgICB9CgogICAgZnVuY3Rpb24gcmVzZW5kRm9yZ290T3RwKCkgewogICAgICBzZW5kRm9yZ290T3RwKCk7CiAgICB9CgogICAgZnVuY3Rpb24gc3VibWl0TmV3UGFzc3dvcmRXaXRoT3RwKCkgewogICAgICBjb25zdCBlbnRlcmVkT3RwID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwT3RwSW5wdXQnKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IG5ld1Bhc3MgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZnBOZXdQYXNzJykudmFsdWU7CiAgICAgIGNvbnN0IGNvbmZpcm1QYXNzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwQ29uZmlybVBhc3MnKS52YWx1ZTsKICAgICAgY29uc3QgbW9iaWxlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZwU2VudFRhcmdldCcpLnRleHRDb250ZW50LnRyaW0oKTsKCiAgICAgIGlmICghZ2VuZXJhdGVkT3RwIHx8IGVudGVyZWRPdHAgIT09IGdlbmVyYXRlZE90cCkgewogICAgICAgIHNob3dUb2FzdCgi4KSF4KSu4KS+4KSo4KWN4KSvIE9UUCEg4KSV4KWD4KSq4KSv4KS+IOCkuOCljeCkleCljeCksOClgOCkqCDgpKrgpLAg4KSq4KWN4KSw4KSm4KSw4KWN4KS24KS/4KSkIE9UUCDgpJXgpYvgpKEg4KSm4KSw4KWN4KScIOCkleCksOClh+CkguClpCIsIGZhbHNlKTsKICAgICAgICByZXR1cm47CiAgICAgIH0KICAgICAgaWYgKCFuZXdQYXNzIHx8IG5ld1Bhc3MubGVuZ3RoIDwgNikgewogICAgICAgIHNob3dUb2FzdCgi4KSq4KS+4KS44KS14KSw4KWN4KShIOCkleCkriDgpLjgpYcg4KSV4KSuIDYg4KSF4KSV4KWN4KS34KSw4KWL4KSCIOCkleCkviDgpLngpYvgpKjgpL4g4KSa4KS+4KS54KS/4KSPISIsIGZhbHNlKTsKICAgICAgICByZXR1cm47CiAgICAgIH0KICAgICAgaWYgKG5ld1Bhc3MgIT09IGNvbmZpcm1QYXNzKSB7CiAgICAgICAgc2hvd1RvYXN0KCLgpKbgpYvgpKjgpYvgpIIg4KSm4KSw4KWN4KScIOCkquCkvuCkuOCkteCksOCljeCkoSDgpK7gpYfgpLIg4KSo4KS54KWA4KSCIOCkluCkvuCkpOClhyDgpLngpYjgpIIhIiwgZmFsc2UpOwogICAgICAgIHJldHVybjsKICAgICAgfQoKICAgICAgLy8gVXBkYXRlIGluIExvY2FsU3RvcmFnZQogICAgICBjb25zdCBjaXRpemVucyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQ0lUSVpFTlMpIHx8ICdbXScpOwogICAgICBjb25zdCBpbmRleCA9IGNpdGl6ZW5zLmZpbmRJbmRleChjID0+IGMubW9iaWxlID09PSBtb2JpbGUpOwogICAgICBpZiAoaW5kZXggIT09IC0xKSB7CiAgICAgICAgY2l0aXplbnNbaW5kZXhdLnBhc3N3b3JkID0gbmV3UGFzczsKICAgICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShTVE9SQUdFX0tFWV9DSVRJWkVOUywgSlNPTi5zdHJpbmdpZnkoY2l0aXplbnMpKTsKICAgICAgICAKICAgICAgICBjbG9zZUZvcmdvdE1vZGFsKCk7CiAgICAgICAgc2hvd1RvYXN0KCLgpKrgpL7gpLjgpLXgpLDgpY3gpKEg4KS44KSr4KSy4KSk4KS+4KSq4KWC4KSw4KWN4KS14KSVIOCkrOCkpuCksiDgpKbgpL/gpK/gpL4g4KSX4KSv4KS+IOCkueCliCEg4KSF4KSsIOCkqOCkjyDgpKrgpL7gpLjgpLXgpLDgpY3gpKEg4KS44KWHIOCksuClieCkl+Ckv+CkqCDgpJXgpLDgpYfgpILgpaQiKTsKICAgICAgICBvcGVuQXV0aE1vZGFsKCdjaXRpemVuJywgJ2xvZ2luJyk7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgc2hvd1RvYXN0KCLgpIngpKrgpK3gpYvgpJXgpY3gpKTgpL4g4KSW4KS+4KSk4KS+IOCkqOCkueClgOCkgiDgpK7gpL/gpLLgpL4hIiwgZmFsc2UpOwogICAgICB9CiAgICB9CgogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgLy8gQ0lUSVpFTiBEQVNIQk9BUkQgTE9HSUMKICAgIC8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgIGZ1bmN0aW9uIHJlbmRlckNpdGl6ZW5EYXNoYm9hcmQoKSB7CiAgICAgIGlmICghY3VycmVudFVzZXIgfHwgY3VycmVudFVzZXIucm9sZSAhPT0gJ2NpdGl6ZW4nKSByZXR1cm47CiAgICAgIGNvbnN0IHVzZXIgPSBjdXJyZW50VXNlci5kYXRhOwoKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdGl6ZW5OYW1lRGlzcCcpLnRleHRDb250ZW50ID0gdXNlci5uYW1lOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0aXplblBhbmNoYXlhdERpc3AnKS50ZXh0Q29udGVudCA9IHVzZXIucGFuY2hheWF0IHx8ICfgpLDgpL7gpK7gpKrgpYHgpLAnOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0aXplbldhcmREaXNwJykudGV4dENvbnRlbnQgPSB1c2VyLndhcmQgfHwgJzA0JzsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdGl6ZW5JZERpc3AnKS50ZXh0Q29udGVudCA9IHVzZXIuaWQgfHwgJ05KLTIwMjQtODg0MSc7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaXRpemVuQXZhdGFyQmlnJykudGV4dENvbnRlbnQgPSB1c2VyLm5hbWUuc3Vic3RyaW5nKDAsIDIpLnRvVXBwZXJDYXNlKCk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdiaWxsVXNlcklkJykudGV4dENvbnRlbnQgPSB1c2VyLmlkIHx8ICdOSi0yMDI0LTg4NDEnOwoKICAgICAgLy8gTG9hZCBHcmlldmFuY2VzCiAgICAgIGNvbnN0IGFsbEdyaWV2YW5jZXMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMpIHx8ICdbXScpOwogICAgICBjb25zdCBteUdyaWV2YW5jZXMgPSBhbGxHcmlldmFuY2VzLmZpbHRlcihnID0+IGcubW9iaWxlID09PSB1c2VyLm1vYmlsZSB8fCBnLmNpdGl6ZW5OYW1lID09PSB1c2VyLm5hbWUpOwoKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdGl6ZW5HcmlldmFuY2VDb3VudCcpLnRleHRDb250ZW50ID0gYCR7bXlHcmlldmFuY2VzLmxlbmd0aH0g4KSV4KWB4KSyYDsKICAgICAgY29uc3QgcGVuZGluZ0NvdW50ID0gbXlHcmlldmFuY2VzLmZpbHRlcihnID0+IGcuc3RhdHVzICE9PSAn4KS44KSu4KS+4KSn4KS+4KSoIOCkquClguCksOCljeCkoyAoUmVzb2x2ZWQpJykubGVuZ3RoOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0aXplblBlbmRpbmdDb3VudCcpLnRleHRDb250ZW50ID0gYCR7cGVuZGluZ0NvdW50fSDgpKrgpY3gpLDgpJXgpY3gpLDgpL/gpK/gpL4g4KSu4KWH4KSCYDsKCiAgICAgIGNvbnN0IGdMaXN0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdGl6ZW5Db21wbGFpbnRzTGlzdCcpOwogICAgICBpZiAobXlHcmlldmFuY2VzLmxlbmd0aCA9PT0gMCkgewogICAgICAgIGdMaXN0LmlubmVySFRNTCA9IGA8ZGl2IGNsYXNzPSJwLTYgdGV4dC1jZW50ZXIgdGV4dC1zbGF0ZS00MDAgdGV4dC1zbSBiZy1zbGF0ZS01MCByb3VuZGVkLXhsIGJvcmRlciBib3JkZXItZGFzaGVkIGJvcmRlci1zbGF0ZS0yMDAiPuCkhuCkquCkleClgCDgpJXgpYvgpIgg4KS44KSV4KWN4KSw4KS/4KSvIOCktuCkv+CkleCkvuCkr+CkpCDgpKbgpLDgpY3gpJwg4KSo4KS54KWA4KSCIOCkueCliOClpDwvZGl2PmA7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgZ0xpc3QuaW5uZXJIVE1MID0gbXlHcmlldmFuY2VzLm1hcChpdGVtID0+IGAKICAgICAgICAgIDxkaXYgY2xhc3M9InAtNCBzbTpwLTUgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci1zbGF0ZS0yMDAgYmctd2hpdGUgc2hhZG93LXNtIHNwYWNlLXktMyI+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZsZXggZmxleC13cmFwIGp1c3RpZnktYmV0d2VlbiBpdGVtcy1zdGFydCBnYXAtMiI+CiAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJ0ZXh0LXhzIGZvbnQtbW9ubyBmb250LWJvbGQgdGV4dC1qYWwtNjAwIGJnLWphbC01MCBweC0yIHB5LTAuNSByb3VuZGVkIGJvcmRlciBib3JkZXItamFsLTIwMCI+JHtpdGVtLmlkfTwvc3Bhbj4KICAgICAgICAgICAgICAgIDxoNCBjbGFzcz0iZm9udC1ib2xkIHRleHQtc2xhdGUtOTAwIG10LTEiPiR7aXRlbS5jYXRlZ29yeX08L2g0PgogICAgICAgICAgICAgICAgPHAgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAiPjxpIGNsYXNzPSJmYS1zb2xpZCBmYS1sb2NhdGlvbi1kb3QgdGV4dC1yb3NlLTUwMCBtci0xIj48L2k+JHtpdGVtLmxvY2F0aW9ufSAo4KSq4KSC4KSa4KS+4KSv4KSkOiAke2l0ZW0ucGFuY2hheWF0fSwg4KS14KS+4KSw4KWN4KShOiAke2l0ZW0ud2FyZH0pPC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJweC0zIHB5LTEgcm91bmRlZC1mdWxsIHRleHQteHMgZm9udC1ib2xkICR7CiAgICAgICAgICAgICAgICBpdGVtLnN0YXR1cyA9PT0gJ+CkuOCkruCkvuCkp+CkvuCkqCDgpKrgpYLgpLDgpY3gpKMgKFJlc29sdmVkKScgPyAnYmctZW1lcmFsZC0xMDAgdGV4dC1lbWVyYWxkLTgwMCcgOgogICAgICAgICAgICAgICAgaXRlbS5zdGF0dXMgPT09ICfgpJXgpL7gpLDgpY3gpK8g4KSq4KWN4KSw4KSX4KSk4KS/IOCkquCksCcgPyAnYmctYmx1ZS0xMDAgdGV4dC1ibHVlLTgwMCcgOgogICAgICAgICAgICAgICAgJ2JnLWFtYmVyLTEwMCB0ZXh0LWFtYmVyLTgwMCcKICAgICAgICAgICAgICB9Ij4ke2l0ZW0uc3RhdHVzfTwvc3Bhbj4KICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICA8cCBjbGFzcz0idGV4dC14cyB0ZXh0LXNsYXRlLTYwMCBiZy1zbGF0ZS01MCBwLTIuNSByb3VuZGVkLXhsIGJvcmRlciBib3JkZXItc2xhdGUtMTAwIj4KICAgICAgICAgICAgICAke2l0ZW0uZGVzY3JpcHRpb24gfHwgJ+CkleCli+CkiCDgpIXgpKTgpL/gpLDgpL/gpJXgpY3gpKQg4KS14KS/4KS14KSw4KSjIOCkqOCkueClgOCkgid9CiAgICAgICAgICAgIDwvcD4KCiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZsZXggZmxleC13cmFwIGp1c3RpZnktYmV0d2VlbiBpdGVtcy1jZW50ZXIgdGV4dC14cyB0ZXh0LXNsYXRlLTUwMCBwdC0xIGJvcmRlci10IGJvcmRlci1zbGF0ZS0xMDAiPgogICAgICAgICAgICAgIDxkaXY+4KSo4KS/4KSv4KWB4KSV4KWN4KSkIOCkuOCljeCkn+CkvuCkqzogPGIgY2xhc3M9InRleHQtc2xhdGUtNzAwIj4ke2l0ZW0uYXNzaWduZWRUbyB8fCAn4KS44KSu4KWA4KSV4KWN4KS34KS+IOCkruClh+Ckgid9PC9iPjwvZGl2PgogICAgICAgICAgICAgIDxkaXY+4KSm4KSw4KWN4KScIOCkpOCkv+CkpeCkvzogPGIgY2xhc3M9InRleHQtc2xhdGUtNzAwIj4ke2l0ZW0uZGF0ZX08L2I+PC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgYCkuam9pbignJyk7CiAgICAgIH0KCiAgICAgIC8vIExvYWQgQXBwbGljYXRpb25zCiAgICAgIGNvbnN0IGFsbEFwcHMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0FQUExJQ0FUSU9OUykgfHwgJ1tdJyk7CiAgICAgIGNvbnN0IG15QXBwcyA9IGFsbEFwcHMuZmlsdGVyKGEgPT4gYS5tb2JpbGUgPT09IHVzZXIubW9iaWxlIHx8IGEuYXBwbGljYW50TmFtZSA9PT0gdXNlci5uYW1lKTsKCiAgICAgIGNvbnN0IGFMaXN0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdGl6ZW5BcHBsaWNhdGlvbnNMaXN0Jyk7CiAgICAgIGlmIChteUFwcHMubGVuZ3RoID09PSAwKSB7CiAgICAgICAgYUxpc3QuaW5uZXJIVE1MID0gYDxkaXYgY2xhc3M9InAtNiB0ZXh0LWNlbnRlciB0ZXh0LXNsYXRlLTQwMCB0ZXh0LXNtIGJnLXNsYXRlLTUwIHJvdW5kZWQteGwgYm9yZGVyIGJvcmRlci1kYXNoZWQgYm9yZGVyLXNsYXRlLTIwMCI+4KSG4KSq4KSo4KWHIOCkheCkreClgCDgpKTgpJUg4KSV4KWL4KSIIOCkqOCkr+CkviDgpJXgpKjgpYfgpJXgpY3gpLbgpKgg4KSG4KS14KWH4KSm4KSoIOCkqOCkueClgOCkgiDgpJXgpL/gpK/gpL4g4KS54KWI4KWkPC9kaXY+YDsKICAgICAgfSBlbHNlIHsKICAgICAgICBhTGlzdC5pbm5lckhUTUwgPSBteUFwcHMubWFwKGl0ZW0gPT4gYAogICAgICAgICAgPGRpdiBjbGFzcz0icC00IHNtOnAtNSByb3VuZGVkLTJ4bCBib3JkZXIgYm9yZGVyLXNsYXRlLTIwMCBiZy13aGl0ZSBzaGFkb3ctc20gZmxleCBmbGV4LXdyYXAganVzdGlmeS1iZXR3ZWVuIGl0ZW1zLWNlbnRlciBnYXAtNCI+CiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InRleHQteHMgZm9udC1tb25vIGZvbnQtYm9sZCB0ZXh0LWphbC02MDAgYmctamFsLTUwIHB4LTIgcHktMC41IHJvdW5kZWQgYm9yZGVyIGJvcmRlci1qYWwtMjAwIj4ke2l0ZW0uaWR9PC9zcGFuPgogICAgICAgICAgICAgIDxoNCBjbGFzcz0iZm9udC1ib2xkIHRleHQtc2xhdGUtOTAwIG10LTEiPiR7aXRlbS5jb25uZWN0aW9uVHlwZX0g4KSo4KSyIOCkleCkqOClh+CkleCljeCktuCkqDwvaDQ+CiAgICAgICAgICAgICAgPHAgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAiPuCkquCkpOCkvjogJHtpdGVtLmFkZHJlc3N9ICjgpKrgpILgpJrgpL7gpK/gpKQ6ICR7aXRlbS5wYW5jaGF5YXR9LCDgpLXgpL7gpLDgpY3gpKE6ICR7aXRlbS53YXJkfSk8L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJ0ZXh0LXJpZ2h0Ij4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0icHgtMyBweS0xIHJvdW5kZWQtZnVsbCB0ZXh0LXhzIGZvbnQtYm9sZCAkewogICAgICAgICAgICAgICAgaXRlbS5zdGF0dXMuaW5jbHVkZXMoJ0FwcHJvdmVkJykgfHwgaXRlbS5zdGF0dXMuaW5jbHVkZXMoJ+CkuOCljeCkteClgOCkleClg+CkpCcpID8gJ2JnLWVtZXJhbGQtMTAwIHRleHQtZW1lcmFsZC04MDAnIDogJ2JnLWFtYmVyLTEwMCB0ZXh0LWFtYmVyLTgwMCcKICAgICAgICAgICAgICB9Ij4ke2l0ZW0uc3RhdHVzfTwvc3Bhbj4KICAgICAgICAgICAgICA8cCBjbGFzcz0idGV4dC1bMTFweF0gdGV4dC1zbGF0ZS00MDAgbXQtMSI+4KSG4KS14KWH4KSm4KSoIOCkpOCkv+CkpeCkvzogJHtpdGVtLmRhdGV9PC9wPgogICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBvbmNsaWNrPSJkb3dubG9hZEFwcGxpY2F0aW9uUGRmKCcke2l0ZW0uaWR9JykiIGNsYXNzPSJtdC0yIHB4LTMgcHktMiByb3VuZGVkLWxnIGJnLWphbC02MDAgaG92ZXI6YmctamFsLTcwMCB0ZXh0LXdoaXRlIHRleHQteHMgZm9udC1ib2xkIj48aSBjbGFzcz0iZmEtc29saWQgZmEtZmlsZS1wZGYgbXItMSI+PC9pPiBQREYg4KSh4KS+4KSJ4KSo4KSy4KWL4KShIC8g4KSq4KWN4KSw4KS/4KSC4KSfPC9idXR0b24+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgYCkuam9pbignJyk7CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBzd2l0Y2hDaXRpemVuVGFiKHRhYikgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0VGFiQ29tcGxhaW50cycpLmNsYXNzTmFtZSA9ICJwYi0zIGJvcmRlci1iLTIgYm9yZGVyLXRyYW5zcGFyZW50IHRleHQtc2xhdGUtNTAwIGhvdmVyOnRleHQtc2xhdGUtODAwIGZvbnQtYm9sZCB0ZXh0LXNtIHdoaXRlc3BhY2Utbm93cmFwIjsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdFRhYkNvbm5lY3Rpb25zJykuY2xhc3NOYW1lID0gInBiLTMgYm9yZGVyLWItMiBib3JkZXItdHJhbnNwYXJlbnQgdGV4dC1zbGF0ZS01MDAgaG92ZXI6dGV4dC1zbGF0ZS04MDAgZm9udC1ib2xkIHRleHQtc20gd2hpdGVzcGFjZS1ub3dyYXAiOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0VGFiU2NoZWR1bGUnKS5jbGFzc05hbWUgPSAicGItMyBib3JkZXItYi0yIGJvcmRlci10cmFuc3BhcmVudCB0ZXh0LXNsYXRlLTUwMCBob3Zlcjp0ZXh0LXNsYXRlLTgwMCBmb250LWJvbGQgdGV4dC1zbSB3aGl0ZXNwYWNlLW5vd3JhcCI7CgogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0Vmlld0NvbXBsYWludHMnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdFZpZXdDb25uZWN0aW9ucycpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0Vmlld1NjaGVkdWxlJykuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CgogICAgICBpZiAodGFiID09PSAnY29tcGxhaW50cycpIHsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0VGFiQ29tcGxhaW50cycpLmNsYXNzTmFtZSA9ICJwYi0zIGJvcmRlci1iLTIgYm9yZGVyLWphbC02MDAgdGV4dC1qYWwtNzAwIGZvbnQtYm9sZCB0ZXh0LXNtIHdoaXRlc3BhY2Utbm93cmFwIjsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0Vmlld0NvbXBsYWludHMnKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgfSBlbHNlIGlmICh0YWIgPT09ICdjb25uZWN0aW9ucycpIHsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0VGFiQ29ubmVjdGlvbnMnKS5jbGFzc05hbWUgPSAicGItMyBib3JkZXItYi0yIGJvcmRlci1qYWwtNjAwIHRleHQtamFsLTcwMCBmb250LWJvbGQgdGV4dC1zbSB3aGl0ZXNwYWNlLW5vd3JhcCI7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NpdFZpZXdDb25uZWN0aW9ucycpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICB9IGVsc2UgaWYgKHRhYiA9PT0gJ3NjaGVkdWxlJykgewogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaXRUYWJTY2hlZHVsZScpLmNsYXNzTmFtZSA9ICJwYi0zIGJvcmRlci1iLTIgYm9yZGVyLWphbC02MDAgdGV4dC1qYWwtNzAwIGZvbnQtYm9sZCB0ZXh0LXNtIHdoaXRlc3BhY2Utbm93cmFwIjsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2l0Vmlld1NjaGVkdWxlJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgIH0KICAgIH0KCiAgICAvLyBDaXRpemVuIE1vZGFsIHRyaWdnZXJzCiAgICBmdW5jdGlvbiBoYW5kbGVIZXJvTmV3Q29ubmVjdGlvbkNsaWNrKCkgewogICAgICBpZiAoIWN1cnJlbnRVc2VyKSB7CiAgICAgICAgb3BlbkF1dGhNb2RhbCgnY2l0aXplbicsICdsb2dpbicpOwogICAgICAgIHNob3dUb2FzdCgi4KSo4KSv4KS+IOCkleCkqOClh+CkleCljeCktuCkqCDgpIbgpLXgpYfgpKbgpKgg4KSV4KWHIOCksuCkv+CkjyDgpJXgpYPgpKrgpK/gpL4g4KSq4KS54KSy4KWHIOCksuClieCkl+Ckv+CkqCDgpJXgpLDgpYfgpILgpaQiLCBmYWxzZSk7CiAgICAgIH0gZWxzZSBpZiAoY3VycmVudFVzZXIucm9sZSA9PT0gJ2NpdGl6ZW4nKSB7CiAgICAgICAgc2hvd1NlY3Rpb24oJ2NpdGl6ZW4nKTsKICAgICAgICBvcGVuTmV3Q29ubmVjdGlvbk1vZGFsKCk7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgc2hvd1NlY3Rpb24oJ2FkbWluJyk7CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBoYW5kbGVIZXJvR3JpZXZhbmNlQ2xpY2soKSB7CiAgICAgIGlmICghY3VycmVudFVzZXIpIHsKICAgICAgICBvcGVuQXV0aE1vZGFsKCdjaXRpemVuJywgJ2xvZ2luJyk7CiAgICAgICAgc2hvd1RvYXN0KCLgpLbgpL/gpJXgpL7gpK/gpKQg4KSm4KSw4KWN4KScIOCkleCksOCkqOClhyDgpJXgpYcg4KSy4KS/4KSPIOCkleClg+CkquCkr+CkviDgpKrgpLngpLLgpYcg4KSy4KWJ4KSX4KS/4KSoIOCkleCksOClh+CkguClpCIsIGZhbHNlKTsKICAgICAgfSBlbHNlIGlmIChjdXJyZW50VXNlci5yb2xlID09PSAnY2l0aXplbicpIHsKICAgICAgICBzaG93U2VjdGlvbignY2l0aXplbicpOwogICAgICAgIG9wZW5Db21wbGFpbnRNb2RhbCgpOwogICAgICB9IGVsc2UgewogICAgICAgIHNob3dTZWN0aW9uKCdhZG1pbicpOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gb3Blbk5ld0Nvbm5lY3Rpb25Nb2RhbCgpIHsKICAgICAgaWYgKCFjdXJyZW50VXNlcikgewogICAgICAgIG9wZW5BdXRoTW9kYWwoJ2NpdGl6ZW4nLCAnbG9naW4nKTsKICAgICAgICByZXR1cm47CiAgICAgIH0KICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25ld0Nvbm5lY3Rpb25Nb2RhbCcpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICBpZiAoY3VycmVudFVzZXIucm9sZSA9PT0gJ2NpdGl6ZW4nKSB7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcEhlYWROYW1lJykudmFsdWUgPSBjdXJyZW50VXNlci5kYXRhLm5hbWUgfHwgJyc7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcE1vYmlsZScpLnZhbHVlID0gY3VycmVudFVzZXIuZGF0YS5tb2JpbGUgfHwgJyc7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcFBhbmNoYXlhdCcpLnZhbHVlID0gY3VycmVudFVzZXIuZGF0YS5wYW5jaGF5YXQgfHwgJyc7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcFdhcmQnKS52YWx1ZSA9IGN1cnJlbnRVc2VyLmRhdGEud2FyZCB8fCAnMDQnOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VOZXdDb25uZWN0aW9uTW9kYWwoKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdDb25uZWN0aW9uTW9kYWwnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgIH0KCiAgICBsZXQgcGVuZGluZ0Nvbm5lY3Rpb25BcHBsaWNhdGlvbiA9IG51bGw7CgogICAgZnVuY3Rpb24gZmlsZVRvRGF0YVVybChmaWxlKSB7CiAgICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgICAgaWYgKCFmaWxlKSByZXR1cm4gcmVzb2x2ZShudWxsKTsKICAgICAgICBpZiAoZmlsZS5zaXplID4gNTAwICogMTAyNCkgcmV0dXJuIHJlamVjdChuZXcgRXJyb3IoYCR7ZmlsZS5uYW1lfTog4KSr4KS84KS+4KSH4KSyIDUwMCBLQiDgpLjgpYcg4KSs4KSh4KS84KWAIOCkueCliOClpGApKTsKICAgICAgICBjb25zdCBhbGxvd2VkID0gWydhcHBsaWNhdGlvbi9wZGYnLCAnaW1hZ2UvanBlZycsICdpbWFnZS9wbmcnLCAnaW1hZ2Uvd2VicCddOwogICAgICAgIGlmICghYWxsb3dlZC5pbmNsdWRlcyhmaWxlLnR5cGUpKSByZXR1cm4gcmVqZWN0KG5ldyBFcnJvcihgJHtmaWxlLm5hbWV9OiDgpJXgpYfgpLXgpLIgUERGLCBKUEcsIFBORyDgpK/gpL4gV0VCUCDgpKvgpLzgpL7gpIfgpLIg4KSa4KWB4KSo4KWH4KSC4KWkYCkpOwogICAgICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICAgICAgcmVhZGVyLm9ubG9hZCA9ICgpID0+IHJlc29sdmUoeyBuYW1lOiBmaWxlLm5hbWUsIHR5cGU6IGZpbGUudHlwZSwgZGF0YVVybDogcmVhZGVyLnJlc3VsdCB9KTsKICAgICAgICByZWFkZXIub25lcnJvciA9ICgpID0+IHJlamVjdChuZXcgRXJyb3IoYCR7ZmlsZS5uYW1lfTog4KSr4KS84KS+4KSH4KSyIOCkquCkouCkvOClgCDgpKjgpLngpYDgpIIg4KSc4KS+IOCkuOCkleClgOClpGApKTsKICAgICAgICByZWFkZXIucmVhZEFzRGF0YVVSTChmaWxlKTsKICAgICAgfSk7CiAgICB9CgogICAgYXN5bmMgZnVuY3Rpb24gaGFuZGxlTmV3Q29ubmVjdGlvblN1Ym1pdChlKSB7CiAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgaWYgKCFjdXJyZW50VXNlciB8fCBjdXJyZW50VXNlci5yb2xlICE9PSAnY2l0aXplbicpIHsKICAgICAgICBzaG93VG9hc3QoJ+CkleClg+CkquCkr+CkviDgpKrgpLngpLLgpYcg4KSo4KS+4KSX4KSw4KS/4KSVIOCksuClieCkl+Ckv+CkqCDgpJXgpLDgpYfgpILgpaQnLCBmYWxzZSk7IHJldHVybjsKICAgICAgfQogICAgICBjb25zdCBzdWJtaXRCdXR0b24gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjbmV3Q29ubkZvcm0gYnV0dG9uW3R5cGU9InN1Ym1pdCJdJyk7CiAgICAgIGlmIChzdWJtaXRCdXR0b24pIHsgc3VibWl0QnV0dG9uLmRpc2FibGVkID0gdHJ1ZTsgc3VibWl0QnV0dG9uLnRleHRDb250ZW50ID0gJ+CkpuCkuOCljeCkpOCkvuCkteClh+CknOCkvCDgpJzgpL7gpIHgpJrgpYcg4KSc4KS+IOCksOCkueClhyDgpLngpYjgpILigKYnOyB9CiAgICAgIHRyeSB7CiAgICAgICAgY29uc3QgYXBwbGljYW50TmFtZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBIZWFkTmFtZScpLnZhbHVlLnRyaW0oKTsKICAgICAgICBjb25zdCBtb2JpbGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXBwTW9iaWxlJykudmFsdWUudHJpbSgpOwogICAgICAgIGNvbnN0IHBhbmNoYXlhdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBQYW5jaGF5YXQnKS52YWx1ZS50cmltKCk7CiAgICAgICAgY29uc3Qgd2FyZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBXYXJkJykudmFsdWUudHJpbSgpOwogICAgICAgIGNvbnN0IGFkZHJlc3MgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXBwQWRkcmVzcycpLnZhbHVlLnRyaW0oKTsKICAgICAgICBjb25zdCBjb25uZWN0aW9uVHlwZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBUeXBlJykudmFsdWU7CiAgICAgICAgY29uc3QgYWFkaGFhclJhdyA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBBYWRoYWFyJykudmFsdWUudHJpbSgpOwogICAgICAgIGNvbnN0IGRvY3MgPSB7CiAgICAgICAgICBhYWRoYWFyOiBhd2FpdCBmaWxlVG9EYXRhVXJsKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBBYWRoYWFyRG9jJyk/LmZpbGVzPy5bMF0pLAogICAgICAgICAgdm90ZXJJZDogYXdhaXQgZmlsZVRvRGF0YVVybChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXBwVm90ZXJEb2MnKT8uZmlsZXM/LlswXSksCiAgICAgICAgICBwYW46IGF3YWl0IGZpbGVUb0RhdGFVcmwoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcFBhbkRvYycpPy5maWxlcz8uWzBdKQogICAgICAgIH07CiAgICAgICAgY29uc3Qgc2VyaWFsID0gRGF0ZS5ub3coKS50b1N0cmluZygpLnNsaWNlKC04KTsKICAgICAgICBwZW5kaW5nQ29ubmVjdGlvbkFwcGxpY2F0aW9uID0gewogICAgICAgICAgaWQ6ICdOSi1BUFAtJyArIHNlcmlhbCwgYXBwbGljYW50TmFtZSwgbW9iaWxlLCBhYWRoYWFyOiBhYWRoYWFyUmF3LAogICAgICAgICAgcGFuY2hheWF0LCB3YXJkLCBhZGRyZXNzLCBjb25uZWN0aW9uVHlwZSwgZG9jdW1lbnRzOiBkb2NzLAogICAgICAgICAgZGF0ZTogbmV3IERhdGUoKS50b0xvY2FsZURhdGVTdHJpbmcoJ2VuLUlOJyksCiAgICAgICAgICBzdGF0dXM6ICfgpKjgpL/gpLDgpYDgpJXgpY3gpLfgpKMg4KS54KWH4KSk4KWBIOCksuCkguCkrOCkv+CkpCAoUGVuZGluZyknLCBjaXRpemVuSWQ6IGN1cnJlbnRVc2VyLmRhdGEuaWQgfHwgJycsCiAgICAgICAgICBlbWFpbDogY3VycmVudFVzZXIuZGF0YS5lbWFpbCB8fCAnJwogICAgICAgIH07CiAgICAgICAgY29uc3QgZmllbGRzID0gWwogICAgICAgICAgWyfgpIbgpLXgpYfgpKbgpKgg4KS44KSC4KSW4KWN4KSv4KS+JywgcGVuZGluZ0Nvbm5lY3Rpb25BcHBsaWNhdGlvbi5pZF0sIFsn4KSG4KS14KWH4KSm4KSVIOCkleCkviDgpKjgpL7gpK4nLCBhcHBsaWNhbnROYW1lXSwKICAgICAgICAgIFsn4KSu4KWL4KSs4KS+4KSH4KSyIOCkqOCkguCkrOCksCcsIG1vYmlsZV0sIFsn4KSG4KSn4KS+4KSwIOCkuOCkguCkluCljeCkr+CkvicsIGFhZGhhYXJSYXcgfHwgJ+CkqOCkueClgOCkgiDgpKbgpL/gpK/gpL4g4KSX4KSv4KS+J10sCiAgICAgICAgICBbJ+Ckl+CljeCksOCkvuCkriDgpKrgpILgpJrgpL7gpK/gpKQnLCBwYW5jaGF5YXRdLCBbJ+CkteCkvuCksOCljeCkoSDgpLjgpILgpJbgpY3gpK/gpL4nLCB3YXJkXSwgWyfgpKrgpYLgpLDgpL4g4KSq4KSk4KS+JywgYWRkcmVzc10sCiAgICAgICAgICBbJ+CkleCkqOClh+CkleCljeCktuCkqCDgpJXgpL4g4KSq4KWN4KSw4KSV4KS+4KSwJywgY29ubmVjdGlvblR5cGVdLCBbJ+CkhuCkteClh+CkpuCkqCDgpKTgpL/gpKXgpL8nLCBwZW5kaW5nQ29ubmVjdGlvbkFwcGxpY2F0aW9uLmRhdGVdLAogICAgICAgICAgWyfgpIbgpKfgpL7gpLAg4KSm4KS44KWN4KSk4KS+4KS14KWH4KSc4KS8JywgZG9jcy5hYWRoYWFyPy5uYW1lIHx8ICfgpIXgpKrgpLLgpYvgpKEg4KSo4KS54KWA4KSCIOCkleCkv+Ckr+CkviddLAogICAgICAgICAgWyfgpLXgpYvgpJ/gpLAgSUQg4KSm4KS44KWN4KSk4KS+4KS14KWH4KSc4KS8JywgZG9jcy52b3RlcklkPy5uYW1lIHx8ICfgpIXgpKrgpLLgpYvgpKEg4KSo4KS54KWA4KSCIOCkleCkv+Ckr+CkviddLAogICAgICAgICAgWydQQU4g4KSm4KS44KWN4KSk4KS+4KS14KWH4KSc4KS8JywgZG9jcy5wYW4/Lm5hbWUgfHwgJ+CkheCkquCksuCli+CkoSDgpKjgpLngpYDgpIIg4KSV4KS/4KSv4KS+J10sCiAgICAgICAgICBbJ+CkuOCljeCkpeCkv+CkpOCkvycsIHBlbmRpbmdDb25uZWN0aW9uQXBwbGljYXRpb24uc3RhdHVzXQogICAgICAgIF07CiAgICAgICAgY29uc3QgZXNjID0gdiA9PiBTdHJpbmcodiA/PyAnJykucmVwbGFjZSgvWyY8PiInXS9nLGM9Pih7JyYnOicmYW1wOycsJzwnOicmbHQ7JywnPic6JyZndDsnLCciJzonJnF1b3Q7JywiJyI6JyYjMzk7J31bY10pKTsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXBwbGljYXRpb25QcmV2aWV3Q29udGVudCcpLmlubmVySFRNTCA9IGA8ZGl2IGNsYXNzPSJib3JkZXItMiBib3JkZXItc2xhdGUtMjAwIHJvdW5kZWQteGwgcC00IHNtOnAtNiI+PGRpdiBjbGFzcz0idGV4dC1jZW50ZXIgYm9yZGVyLWIgcGItNCBtYi00Ij48aDIgY2xhc3M9InRleHQteGwgZm9udC1ibGFjayI+4KSo4KSyIOCknOCksiDgpK/gpYvgpJzgpKjgpL48L2gyPjxwIGNsYXNzPSJ0ZXh0LXNtIj7gpKjgpK/gpL4g4KSY4KSw4KWH4KSy4KWCIOCkqOCksiDgpJXgpKjgpYfgpJXgpY3gpLbgpKgg4KSG4KS14KWH4KSm4KSoPC9wPjxwIGNsYXNzPSJmb250LW1vbm8gZm9udC1ib2xkIHRleHQtamFsLTcwMCBtdC0yIj4ke2VzYyhwZW5kaW5nQ29ubmVjdGlvbkFwcGxpY2F0aW9uLmlkKX08L3A+PC9kaXY+PGRpdiBjbGFzcz0iZ3JpZCBncmlkLWNvbHMtMSBzbTpncmlkLWNvbHMtMiBnYXAtMyI+JHtmaWVsZHMubWFwKChbayx2XSk9PmA8ZGl2IGNsYXNzPSJib3JkZXIgcm91bmRlZC1sZyBwLTMiPjxkaXYgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAgbWItMSI+JHtlc2Moayl9PC9kaXY+PGRpdiBjbGFzcz0iZm9udC1zZW1pYm9sZCBicmVhay13b3JkcyI+JHtlc2Modil9PC9kaXY+PC9kaXY+YCkuam9pbignJyl9PC9kaXY+PHAgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAgbXQtNCI+4KSc4KSu4KS+IOCkleCksOCkqOClhyDgpKrgpLAg4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkviDgpLjgpYcg4KS44KWN4KSl4KS/4KSk4KS/IOCkpuClh+CkluClgCDgpJzgpL4g4KS44KSV4KWH4KSX4KWA4KWkPC9wPjwvZGl2PmA7CiAgICAgICAgY2xvc2VOZXdDb25uZWN0aW9uTW9kYWwoKTsKICAgICAgICBjb25zdCBwcmV2aWV3ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcGxpY2F0aW9uUHJldmlld01vZGFsJyk7CiAgICAgICAgcHJldmlldy5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsgcHJldmlldy5jbGFzc0xpc3QuYWRkKCdmbGV4Jyk7CiAgICAgIH0gY2F0Y2ggKGVycikgewogICAgICAgIHNob3dUb2FzdChlcnIubWVzc2FnZSB8fCAn4KSm4KS44KWN4KSk4KS+4KS14KWH4KSc4KS8IOCkheCkquCksuCli+CkoSDgpJXgpLDgpKjgpYcg4KSu4KWH4KSCIOCkuOCkruCkuOCljeCkr+CkviDgpLngpYHgpIjgpaQnLCBmYWxzZSk7CiAgICAgIH0gZmluYWxseSB7CiAgICAgICAgaWYgKHN1Ym1pdEJ1dHRvbikgeyBzdWJtaXRCdXR0b24uZGlzYWJsZWQgPSBmYWxzZTsgc3VibWl0QnV0dG9uLnRleHRDb250ZW50ID0gJ+CkhuCkteClh+CkpuCkqCDgpLjgpKzgpK7gpL/gpJ8g4KSV4KSw4KWH4KSCIChTdWJtaXQgQXBwbGljYXRpb24pJzsgfQogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VBcHBsaWNhdGlvblByZXZpZXcoKSB7CiAgICAgIGNvbnN0IGVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcGxpY2F0aW9uUHJldmlld01vZGFsJyk7CiAgICAgIGVsLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOyBlbC5jbGFzc0xpc3QucmVtb3ZlKCdmbGV4Jyk7IHBlbmRpbmdDb25uZWN0aW9uQXBwbGljYXRpb24gPSBudWxsOwogICAgfQogICAgZnVuY3Rpb24gYmFja1RvQ29ubmVjdGlvbkZvcm0oKSB7CiAgICAgIGNvbnN0IGVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcGxpY2F0aW9uUHJldmlld01vZGFsJyk7IGVsLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOyBlbC5jbGFzc0xpc3QucmVtb3ZlKCdmbGV4Jyk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdDb25uZWN0aW9uTW9kYWwnKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgIH0KICAgIGZ1bmN0aW9uIGFwcGxpY2F0aW9uUHJpbnRIdG1sKGFwcCkgewogICAgICBjb25zdCBlc2MgPSB2ID0+IFN0cmluZyh2ID8/ICcnKS5yZXBsYWNlKC9bJjw+IiddL2csYz0+KHsnJic6JyZhbXA7JywnPCc6JyZsdDsnLCc+JzonJmd0OycsJyInOicmcXVvdDsnLCInIjonJiMzOTsnfVtjXSkpOwogICAgICByZXR1cm4gYDwhZG9jdHlwZSBodG1sPjxodG1sIGxhbmc9ImhpIj48aGVhZD48bWV0YSBjaGFyc2V0PSJ1dGYtOCI+PHRpdGxlPiR7ZXNjKGFwcC5pZCl9IC0g4KSG4KS14KWH4KSm4KSoPC90aXRsZT48c3R5bGU+Ym9keXtmb250LWZhbWlseTpBcmlhbCxzYW5zLXNlcmlmO21hcmdpbjoyOHB4O2NvbG9yOiMxMTF9aDEsaDIscHt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW46NnB4fXRhYmxle3dpZHRoOjEwMCU7Ym9yZGVyLWNvbGxhcHNlOmNvbGxhcHNlO21hcmdpbi10b3A6MjJweH10ZHtib3JkZXI6MXB4IHNvbGlkICM3Nzc7cGFkZGluZzoxMHB4O3ZlcnRpY2FsLWFsaWduOnRvcH10ZDpmaXJzdC1jaGlsZHt3aWR0aDozNCU7Zm9udC13ZWlnaHQ6Ym9sZDtiYWNrZ3JvdW5kOiNmM2Y2Zjh9Lmlke3RleHQtYWxpZ246Y2VudGVyO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjE4cHg7bWFyZ2luOjE4cHh9LmZvb3R7bWFyZ2luLXRvcDo0MHB4O2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2Vlbn08L3N0eWxlPjwvaGVhZD48Ym9keT48aDE+4KSo4KSyIOCknOCksiDgpK/gpYvgpJzgpKjgpL48L2gxPjxoMj7gpKjgpK/gpL4g4KSo4KSyIOCkleCkqOClh+CkleCljeCktuCkqCDgpIbgpLXgpYfgpKbgpKgg4KSw4KS44KWA4KSmPC9oMj48ZGl2IGNsYXNzPSJpZCI+4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkvjogJHtlc2MoYXBwLmlkKX08L2Rpdj48dGFibGU+JHtbWyfgpIbgpLXgpYfgpKbgpJUg4KSV4KS+IOCkqOCkvuCkricsYXBwLmFwcGxpY2FudE5hbWVdLFsn4KSu4KWL4KSs4KS+4KSH4KSyIOCkqOCkguCkrOCksCcsYXBwLm1vYmlsZV0sWyfgpIbgpKfgpL7gpLAg4KS14KS/4KS14KSw4KSjJyxhcHAuYWFkaGFhcnx8J+CkqOCkueClgOCkgiDgpKbgpL/gpK/gpL4g4KSX4KSv4KS+J10sWyfgpJfgpY3gpLDgpL7gpK4g4KSq4KSC4KSa4KS+4KSv4KSkJyxhcHAucGFuY2hheWF0XSxbJ+CkteCkvuCksOCljeCkoSDgpLjgpILgpJbgpY3gpK/gpL4nLGFwcC53YXJkXSxbJ+CkquClguCksOCkviDgpKrgpKTgpL4nLGFwcC5hZGRyZXNzXSxbJ+CkleCkqOClh+CkleCljeCktuCkqCDgpKrgpY3gpLDgpJXgpL7gpLAnLGFwcC5jb25uZWN0aW9uVHlwZV0sWyfgpIbgpLXgpYfgpKbgpKgg4KSk4KS/4KSl4KS/JyxhcHAuZGF0ZV0sWyfgpLXgpLDgpY3gpKTgpK7gpL7gpKgg4KS44KWN4KSl4KS/4KSk4KS/JyxhcHAuc3RhdHVzXV0ubWFwKChbayx2XSk9PmA8dHI+PHRkPiR7ZXNjKGspfTwvdGQ+PHRkPiR7ZXNjKHYpfTwvdGQ+PC90cj5gKS5qb2luKCcnKX08L3RhYmxlPjxwIHN0eWxlPSJ0ZXh0LWFsaWduOmxlZnQ7bWFyZ2luLXRvcDoyNHB4Ij7gpIfgpLgg4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkviDgpJXgpL4g4KSJ4KSq4KSv4KWL4KSXIOCkleCksOCkleClhyDgpIbgpLXgpYfgpKbgpKgg4KSV4KWAIOCkuOCljeCkpeCkv+CkpOCkvyDgpJzgpL7gpIHgpJrgpYfgpILgpaQ8L3A+PGRpdiBjbGFzcz0iZm9vdCI+PHNwYW4+4KSG4KS14KWH4KSm4KSVIOCkleClhyDgpLngpLjgpY3gpKTgpL7gpJXgpY3gpLfgpLA6IF9fX19fX19fX188L3NwYW4+PHNwYW4+4KSV4KS+4KSw4KWN4KSv4KS+4KSy4KSvIOCkruClgeCkueCksDogX19fX19fX19fXzwvc3Bhbj48L2Rpdj48c2NyaXB0PndpbmRvdy5vbmxvYWQ9KCk9PnNldFRpbWVvdXQoKCk9PndpbmRvdy5wcmludCgpLDMwMCk8XC9zY3JpcHQ+PC9ib2R5PjwvaHRtbD5gOwogICAgfQoKICAgIGZ1bmN0aW9uIGRvd25sb2FkQXBwbGljYXRpb25QZGYoYXBwSWQpIHsKICAgICAgY29uc3QgYXBwcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TKSB8fCAnW10nKTsKICAgICAgY29uc3QgYXBwID0gYXBwcy5maW5kKGEgPT4gYS5pZCA9PT0gYXBwSWQgJiYgY3VycmVudFVzZXIgJiYgY3VycmVudFVzZXIucm9sZSA9PT0gJ2NpdGl6ZW4nICYmIChhLm1vYmlsZSA9PT0gY3VycmVudFVzZXIuZGF0YS5tb2JpbGUgfHwgYS5jaXRpemVuSWQgPT09IGN1cnJlbnRVc2VyLmRhdGEuaWQpKTsKICAgICAgaWYgKCFhcHApIHsgc2hvd1RvYXN0KCfgpK/gpLkg4KSG4KS14KWH4KSm4KSoIOCkhuCkquCkleClhyDgpJbgpL7gpKTgpYcg4KSu4KWH4KSCIOCkqOCkueClgOCkgiDgpK7gpL/gpLLgpL7gpaQnLCBmYWxzZSk7IHJldHVybjsgfQogICAgICBjb25zdCB3ID0gd2luZG93Lm9wZW4oJycsICdfYmxhbmsnKTsKICAgICAgaWYgKCF3KSB7IHNob3dUb2FzdCgn4KSq4KWJ4KSqLeCkheCkqiDgpJXgpYAg4KSF4KSo4KWB4KSu4KSk4KS/IOCkpuClh+Ckgiwg4KSr4KS/4KSwIFBERiDgpKHgpL7gpIngpKjgpLLgpYvgpKEg4KSV4KSw4KWH4KSC4KWkJywgZmFsc2UpOyByZXR1cm47IH0KICAgICAgdy5kb2N1bWVudC5vcGVuKCk7IHcuZG9jdW1lbnQud3JpdGUoYXBwbGljYXRpb25QcmludEh0bWwoYXBwKSk7IHcuZG9jdW1lbnQuY2xvc2UoKTsKICAgIH0KCiAgICBmdW5jdGlvbiBjb25maXJtQXBwbGljYXRpb25BbmRQcmludCgpIHsKICAgICAgaWYgKCFwZW5kaW5nQ29ubmVjdGlvbkFwcGxpY2F0aW9uKSByZXR1cm47CiAgICAgIGNvbnN0IGFwcCA9IHBlbmRpbmdDb25uZWN0aW9uQXBwbGljYXRpb247CiAgICAgIHRyeSB7CiAgICAgICAgY29uc3QgYXBwcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TKSB8fCAnW10nKTsKICAgICAgICBhcHBzLnVuc2hpZnQoYXBwKTsgbG9jYWxTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TLCBKU09OLnN0cmluZ2lmeShhcHBzKSk7CiAgICAgIH0gY2F0Y2ggKGVycikgewogICAgICAgIHNob3dUb2FzdCgn4KSs4KWN4KSw4KS+4KSJ4KSc4KS84KSwIOCkuOCljeCkn+Cli+CksOClh+CknCDgpK3gpLAg4KSX4KSv4KS+IOCkueCliOClpCDgpJvgpYvgpJ/gpYAg4KSr4KS84KS+4KSH4KSy4KWH4KSCIOCkheCkquCksuCli+CkoSDgpJXgpLDgpYfgpILgpaQnLCBmYWxzZSk7IHJldHVybjsKICAgICAgfQogICAgICBjbG9zZUFwcGxpY2F0aW9uUHJldmlldygpOwogICAgICByZW5kZXJDaXRpemVuRGFzaGJvYXJkKCk7IHJlbmRlckFkbWluRGFzaGJvYXJkKCk7CiAgICAgIHNob3dUb2FzdChg4KSG4KS14KWH4KSm4KSoIOCknOCkruCkviDgpLngpYHgpIbgpaQg4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkvjogJHthcHAuaWR9YCk7CiAgICAgIGNvbnN0IHcgPSB3aW5kb3cub3BlbignJywgJ19ibGFuaycpOwogICAgICBpZiAodykgeyB3LmRvY3VtZW50Lm9wZW4oKTsgdy5kb2N1bWVudC53cml0ZShhcHBsaWNhdGlvblByaW50SHRtbChhcHApKTsgdy5kb2N1bWVudC5jbG9zZSgpOyB9CiAgICAgIHBlbmRpbmdDb25uZWN0aW9uQXBwbGljYXRpb24gPSBudWxsOwogICAgICBbJ2FwcEFhZGhhYXJEb2MnLCdhcHBWb3RlckRvYycsJ2FwcFBhbkRvYyddLmZvckVhY2goaWQgPT4geyBjb25zdCBlbD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZChpZCk7IGlmKGVsKSBlbC52YWx1ZT0nJzsgfSk7CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VBcHBsaWNhdGlvbkRldGFpbHMoKSB7CiAgICAgIGNvbnN0IG1vZGFsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FkbWluQXBwbGljYXRpb25EZXRhaWxzTW9kYWwnKTsKICAgICAgbW9kYWwuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7IG1vZGFsLmNsYXNzTGlzdC5yZW1vdmUoJ2ZsZXgnKTsKICAgIH0KCiAgICBmdW5jdGlvbiB2aWV3QXBwbGljYXRpb25EZXRhaWxzKGFwcElkKSB7CiAgICAgIGlmICghY3VycmVudFVzZXIgfHwgY3VycmVudFVzZXIucm9sZSAhPT0gJ2FkbWluJykgeyBzaG93VG9hc3QoJ+Ckr+CkuSDgpLXgpL/gpLXgpLDgpKMg4KSV4KWH4KS14KSyIEFkbWluIOCkpuClh+CkliDgpLjgpJXgpKTgpL4g4KS54KWI4KWkJywgZmFsc2UpOyByZXR1cm47IH0KICAgICAgY29uc3QgYXBwcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TKSB8fCAnW10nKTsKICAgICAgY29uc3QgYXBwID0gYXBwcy5maW5kKGEgPT4gYS5pZCA9PT0gYXBwSWQpOwogICAgICBpZiAoIWFwcCkgeyBzaG93VG9hc3QoJ+CkhuCkteClh+CkpuCkqCDgpKjgpLngpYDgpIIg4KSu4KS/4KSy4KS+4KWkJywgZmFsc2UpOyByZXR1cm47IH0KICAgICAgY29uc3QgZXNjID0gdiA9PiBTdHJpbmcodiA/PyAnJykucmVwbGFjZSgvWyY8PiInXS9nLGM9Pih7JyYnOicmYW1wOycsJzwnOicmbHQ7JywnPic6JyZndDsnLCciJzonJnF1b3Q7JywiJyI6JyYjMzk7J31bY10pKTsKICAgICAgY29uc3QgZG9jTGluayA9IChsYWJlbCwgZG9jKSA9PiB7CiAgICAgICAgaWYgKCFkb2MgfHwgIWRvYy5kYXRhVXJsKSByZXR1cm4gYDxkaXYgY2xhc3M9ImJvcmRlciByb3VuZGVkLXhsIHAtMyI+PGI+JHtsYWJlbH08L2I+PHAgY2xhc3M9InRleHQtc20gdGV4dC1zbGF0ZS01MDAgbXQtMSI+4KSF4KSq4KSy4KWL4KShIOCkqOCkueClgOCkgiDgpJXgpL/gpK/gpL4g4KSX4KSv4KS+PC9wPjwvZGl2PmA7CiAgICAgICAgY29uc3Qgc2FmZVVybCA9IGRvYy5kYXRhVXJsOwogICAgICAgIGNvbnN0IGlzSW1hZ2UgPSBTdHJpbmcoZG9jLnR5cGUgfHwgJycpLnN0YXJ0c1dpdGgoJ2ltYWdlLycpOwogICAgICAgIHJldHVybiBgPGRpdiBjbGFzcz0iYm9yZGVyIHJvdW5kZWQteGwgcC0zIHNwYWNlLXktMiI+PGI+JHtsYWJlbH08L2I+PHAgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAgYnJlYWstYWxsIj4ke2VzYyhkb2MubmFtZSl9PC9wPiR7aXNJbWFnZSA/IGA8aW1nIHNyYz0iJHtzYWZlVXJsfSIgYWx0PSIke2xhYmVsfSIgY2xhc3M9Im1heC1oLTY0IG1heC13LWZ1bGwgb2JqZWN0LWNvbnRhaW4gcm91bmRlZCBib3JkZXIgYmctc2xhdGUtNTAiPmAgOiAnJ308YSBocmVmPSIke3NhZmVVcmx9IiBkb3dubG9hZD0iJHtlc2MoZG9jLm5hbWUpfSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9vcGVuZXIiIGNsYXNzPSJpbmxpbmUtYmxvY2sgcHgtMyBweS0yIGJnLXNreS02MDAgdGV4dC13aGl0ZSByb3VuZGVkLWxnIHRleHQteHMgZm9udC1ib2xkIj7gpKbgpLjgpY3gpKTgpL7gpLXgpYfgpJzgpLwg4KSW4KWL4KSy4KWH4KSCIC8g4KSh4KS+4KSJ4KSo4KSy4KWL4KShPC9hPjwvZGl2PmA7CiAgICAgIH07CiAgICAgIGNvbnN0IGZpZWxkcyA9IFtbJ+CkhuCkteClh+CkpuCkqCDgpLjgpILgpJbgpY3gpK/gpL4nLGFwcC5pZF0sWyfgpKjgpL7gpK4nLGFwcC5hcHBsaWNhbnROYW1lXSxbJ+CkruCli+CkrOCkvuCkh+CksicsYXBwLm1vYmlsZV0sWyfgpIjgpK7gpYfgpLInLGFwcC5lbWFpbF0sWyfgpIbgpKfgpL7gpLAg4KS14KS/4KS14KSw4KSjJyxhcHAuYWFkaGFhcl0sWyfgpKrgpILgpJrgpL7gpK/gpKQnLGFwcC5wYW5jaGF5YXRdLFsn4KS14KS+4KSw4KWN4KShJyxhcHAud2FyZF0sWyfgpKrgpKTgpL4nLGFwcC5hZGRyZXNzXSxbJ+CkleCkqOClh+CkleCljeCktuCkqCDgpKrgpY3gpLDgpJXgpL7gpLAnLGFwcC5jb25uZWN0aW9uVHlwZV0sWyfgpKTgpL/gpKXgpL8nLGFwcC5kYXRlXSxbJ+CkuOCljeCkpeCkv+CkpOCkvycsYXBwLnN0YXR1c11dOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtaW5BcHBsaWNhdGlvbkRldGFpbHNDb250ZW50JykuaW5uZXJIVE1MID0gYDxkaXYgY2xhc3M9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgZ2FwLTMiPiR7ZmllbGRzLm1hcCgoW2ssdl0pPT5gPGRpdiBjbGFzcz0iYm9yZGVyIHJvdW5kZWQtbGcgcC0zIj48ZGl2IGNsYXNzPSJ0ZXh0LXhzIHRleHQtc2xhdGUtNTAwIj4ke2VzYyhrKX08L2Rpdj48ZGl2IGNsYXNzPSJmb250LXNlbWlib2xkIGJyZWFrLXdvcmRzIj4ke2VzYyh2IHx8ICfigJQnKX08L2Rpdj48L2Rpdj5gKS5qb2luKCcnKX08L2Rpdj48aDQgY2xhc3M9ImZvbnQtYm9sZCB0ZXh0LXNsYXRlLTkwMCBwdC0yIj7gpIXgpKrgpLLgpYvgpKEg4KSV4KS/4KSPIOCkl+CkjyDgpKbgpLjgpY3gpKTgpL7gpLXgpYfgpJzgpLw8L2g0PjxkaXYgY2xhc3M9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgZ2FwLTMiPiR7ZG9jTGluaygn4KSG4KSn4KS+4KSwIOCkleCkvuCksOCljeCkoScsYXBwLmRvY3VtZW50cz8uYWFkaGFhcil9JHtkb2NMaW5rKCfgpLXgpYvgpJ/gpLAgSUQnLGFwcC5kb2N1bWVudHM/LnZvdGVySWQpfSR7ZG9jTGluaygnUEFOIOCkleCkvuCksOCljeCkoScsYXBwLmRvY3VtZW50cz8ucGFuKX08L2Rpdj48ZGl2IGNsYXNzPSJmbGV4IGZsZXgtd3JhcCBnYXAtMiBwdC0yIj48YnV0dG9uIG9uY2xpY2s9ImFwcHJvdmVBcHBsaWNhdGlvbignJHthcHAuaWR9Jyk7Y2xvc2VBcHBsaWNhdGlvbkRldGFpbHMoKSIgY2xhc3M9InB4LTQgcHktMiByb3VuZGVkLWxnIGJnLWVtZXJhbGQtNjAwIHRleHQtd2hpdGUgZm9udC1ib2xkIj7gpIbgpLXgpYfgpKbgpKgg4KS44KWN4KS14KWA4KSV4KWD4KSkIOCkleCksOClh+CkgjwvYnV0dG9uPjxidXR0b24gb25jbGljaz0icmVqZWN0QXBwbGljYXRpb24oJyR7YXBwLmlkfScpO2Nsb3NlQXBwbGljYXRpb25EZXRhaWxzKCkiIGNsYXNzPSJweC00IHB5LTIgcm91bmRlZC1sZyBiZy1yb3NlLTYwMCB0ZXh0LXdoaXRlIGZvbnQtYm9sZCI+4KSF4KS44KWN4KS14KWA4KSV4KWD4KSkIOCkleCksOClh+CkgjwvYnV0dG9uPjwvZGl2PmA7CiAgICAgIGNvbnN0IG1vZGFsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FkbWluQXBwbGljYXRpb25EZXRhaWxzTW9kYWwnKTsgbW9kYWwuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7IG1vZGFsLmNsYXNzTGlzdC5hZGQoJ2ZsZXgnKTsKICAgIH0KCiAgICBmdW5jdGlvbiBvcGVuQ29tcGxhaW50TW9kYWwoKSB7CiAgICAgIGlmICghY3VycmVudFVzZXIgfHwgY3VycmVudFVzZXIucm9sZSAhPT0gJ2NpdGl6ZW4nKSB7CiAgICAgICAgb3BlbkF1dGhNb2RhbCgnY2l0aXplbicsICdsb2dpbicpOwogICAgICAgIHNob3dUb2FzdCgn4KS24KS/4KSV4KS+4KSv4KSkIOCkpuCksOCljeCknCDgpJXgpLDgpKjgpYcg4KSV4KWHIOCksuCkv+CkjyDgpKjgpL7gpJfgpLDgpL/gpJUg4KSy4KWJ4KSX4KS/4KSoIOCkleCksOClh+CkguClpCcsIGZhbHNlKTsKICAgICAgICByZXR1cm47CiAgICAgIH0KICAgICAgY29uc3QgYyA9IGN1cnJlbnRVc2VyLmRhdGEgfHwge307CiAgICAgIGNvbnN0IHB1dCA9IChpZCwgdmFsdWUpID0+IHsgY29uc3QgZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChpZCk7IGlmIChlbCkgZWwudGV4dENvbnRlbnQgPSB2YWx1ZSA9PSBudWxsIHx8IFN0cmluZyh2YWx1ZSkudHJpbSgpID09PSAnJyA/ICfgpIngpKrgpLLgpKzgpY3gpKcg4KSo4KS54KWA4KSCJyA6IFN0cmluZyh2YWx1ZSk7IH07CiAgICAgIHB1dCgnZ3J2Q2l0aXplbk5hbWUnLCBjLm5hbWUpOwogICAgICBwdXQoJ2dydkZhdGhlck5hbWUnLCBjLmZhdGhlck5hbWUpOwogICAgICBwdXQoJ2dydkRvYicsIGMuZG9iKTsKICAgICAgcHV0KCdncnZNb2JpbGUnLCBjLm1vYmlsZSk7CiAgICAgIHB1dCgnZ3J2RW1haWwnLCBjLmVtYWlsICYmICFTdHJpbmcoYy5lbWFpbCkuZW5kc1dpdGgoJ0BuYWxqYWwudXNlcicpID8gYy5lbWFpbCA6ICfgpKjgpLngpYDgpIIg4KSm4KS/4KSv4KS+IOCkl+Ckr+CkvicpOwogICAgICBwdXQoJ2dydkFhZGhhYXInLCBjLmFhZGhhYXIpOwogICAgICBwdXQoJ2dydlBhbmNoYXlhdERpc3BsYXknLCBjLnBhbmNoYXlhdCk7CiAgICAgIHB1dCgnZ3J2V2FyZERpc3BsYXknLCBjLndhcmQpOwogICAgICBwdXQoJ2dydkFkZHJlc3MnLCBjLmFkZHJlc3MgfHwgW2MuaG91c2UgPyAn4KSu4KSV4KS+4KSoICcgKyBjLmhvdXNlIDogJycsIGMuYmxvY2sgPyAn4KSs4KWN4KSy4KWJ4KSVICcgKyBjLmJsb2NrIDogJycsIGMudmlsbGFnZSA/ICfgpJfgpY3gpLDgpL7gpK4gJyArIGMudmlsbGFnZSA6ICcnLCBjLnBhbmNoYXlhdCA/ICfgpKrgpILgpJrgpL7gpK/gpKQgJyArIGMucGFuY2hheWF0IDogJycsIGMuY2l0eSB8fCAnJywgYy5waW5jb2RlIHx8ICcnXS5maWx0ZXIoQm9vbGVhbikuam9pbignLCAnKSk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncnZMb2NhdGlvbicpLnZhbHVlID0gJyc7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncnZEZXNjJykudmFsdWUgPSAnJzsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dyaWV2YW5jZU1vZGFsJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VDb21wbGFpbnRNb2RhbCgpIHsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dyaWV2YW5jZU1vZGFsJykuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gaGFuZGxlR3JpZXZhbmNlU3VibWl0KGUpIHsKICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICBpZiAoIWN1cnJlbnRVc2VyIHx8IGN1cnJlbnRVc2VyLnJvbGUgIT09ICdjaXRpemVuJykgewogICAgICAgIHNob3dUb2FzdCgn4KS24KS/4KSV4KS+4KSv4KSkIOCkpuCksOCljeCknCDgpJXgpLDgpKjgpYcg4KSV4KWHIOCksuCkv+CkjyDgpKrgpLngpLLgpYcg4KSo4KS+4KSX4KSw4KS/4KSVIOCksuClieCkl+Ckv+CkqCDgpJXgpLDgpYfgpILgpaQnLCBmYWxzZSk7IHJldHVybjsKICAgICAgfQogICAgICBjb25zdCBjYXRlZ29yeSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncnZDYXRlZ29yeScpLnZhbHVlOwogICAgICBjb25zdCBjaXRpemVuID0gY3VycmVudFVzZXIuZGF0YSB8fCB7fTsKICAgICAgY29uc3QgcGFuY2hheWF0ID0gY2l0aXplbi5wYW5jaGF5YXQgfHwgJyc7CiAgICAgIGNvbnN0IHdhcmQgPSBjaXRpemVuLndhcmQgfHwgJyc7CiAgICAgIGNvbnN0IGxvY2F0aW9uID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dydkxvY2F0aW9uJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBkZXNjcmlwdGlvbiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncnZEZXNjJykudmFsdWUudHJpbSgpOwogICAgICBjb25zdCBwcmlvcml0eSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncnZQcmlvcml0eScpLnZhbHVlOwogICAgICBpZiAoIWxvY2F0aW9uKSB7IHNob3dUb2FzdCgn4KSV4KWD4KSq4KSv4KS+IOCkuOCkruCkuOCljeCkr+CkviDgpJXgpL4g4KS44KSf4KWA4KSVIOCkuOCljeCkpeCkvuCkqC/gpKrgpKTgpL4g4KSt4KSw4KWH4KSC4KWkJywgZmFsc2UpOyByZXR1cm47IH0KCiAgICAgIGNvbnN0IG5ld1RpY2tldCA9IHsKICAgICAgICBpZDogJ1RLVC0nICsgRGF0ZS5ub3coKS50b1N0cmluZygpLnNsaWNlKC04KSwKICAgICAgICBjaXRpemVuTmFtZTogY2l0aXplbi5uYW1lIHx8ICfgpKjgpL7gpJfgpLDgpL/gpJUnLAogICAgICAgIG1vYmlsZTogY2l0aXplbi5tb2JpbGUgfHwgJycsCiAgICAgICAgY2l0aXplbklkOiBjaXRpemVuLmlkIHx8ICcnLAogICAgICAgIGNpdGl6ZW5EZXRhaWxzOiB7IG5hbWU6IGNpdGl6ZW4ubmFtZSB8fCAnJywgZmF0aGVyTmFtZTogY2l0aXplbi5mYXRoZXJOYW1lIHx8ICcnLCBkb2I6IGNpdGl6ZW4uZG9iIHx8ICcnLCBhYWRoYWFyOiBjaXRpemVuLmFhZGhhYXIgfHwgJycsIG1vYmlsZTogY2l0aXplbi5tb2JpbGUgfHwgJycsIGVtYWlsOiBjaXRpemVuLmVtYWlsIHx8ICcnLCBob3VzZTogY2l0aXplbi5ob3VzZSB8fCAnJywgYmxvY2s6IGNpdGl6ZW4uYmxvY2sgfHwgJycsIHZpbGxhZ2U6IGNpdGl6ZW4udmlsbGFnZSB8fCAnJywgY2l0eTogY2l0aXplbi5jaXR5IHx8ICcnLCBwaW5jb2RlOiBjaXRpemVuLnBpbmNvZGUgfHwgJycsIGFkZHJlc3M6IGNpdGl6ZW4uYWRkcmVzcyB8fCAnJywgcGFuY2hheWF0LCB3YXJkIH0sCiAgICAgICAgcGFuY2hheWF0LAogICAgICAgIHdhcmQsCiAgICAgICAgY2F0ZWdvcnksCiAgICAgICAgbG9jYXRpb24sCiAgICAgICAgZGVzY3JpcHRpb24sCiAgICAgICAgcHJpb3JpdHksCiAgICAgICAgc3RhdHVzOiAn4KSm4KSw4KWN4KScIChTdWJtaXR0ZWQpJywKICAgICAgICBhc3NpZ25lZFRvOiAn4KSF4KS44KS+4KSH4KSoIOCkqOCkueClgOCkgicsCiAgICAgICAgZGF0ZTogbmV3IERhdGUoKS50b0lTT1N0cmluZygpLnNwbGl0KCdUJylbMF0sCiAgICAgICAgcmVtYXJrczogJ+CktuCkv+CkleCkvuCkr+CkpCDgpKbgpLDgpY3gpJwg4KSV4KWAIOCkl+CkiCDgpLngpYjgpaQnCiAgICAgIH07CgogICAgICBjb25zdCBncmlldmFuY2VzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9HUklFVkFOQ0VTKSB8fCAnW10nKTsKICAgICAgZ3JpZXZhbmNlcy51bnNoaWZ0KG5ld1RpY2tldCk7CiAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMsIEpTT04uc3RyaW5naWZ5KGdyaWV2YW5jZXMpKTsKCiAgICAgIGNsb3NlQ29tcGxhaW50TW9kYWwoKTsKICAgICAgc2hvd1RvYXN0KGDgpLbgpL/gpJXgpL7gpK/gpKQg4KSq4KSC4KSc4KWA4KSV4KWD4KSkIOCkueClgeCkiCEg4KSf4KS/4KSV4KSfIOCkuOCkguCkluCljeCkr+CkvjogJHtuZXdUaWNrZXQuaWR9YCk7CiAgICAgIHJlbmRlckNpdGl6ZW5EYXNoYm9hcmQoKTsKICAgICAgcmVuZGVyQWRtaW5EYXNoYm9hcmQoKTsKICAgIH0KCiAgICBmdW5jdGlvbiBwYXlXYXRlckJpbGxNb2RhbCgpIHsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JpbGxNb2RhbCcpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgfQoKICAgIGZ1bmN0aW9uIGNsb3NlQmlsbE1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmlsbE1vZGFsJykuY2xhc3NMaXN0LmFkZCgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gc2ltdWxhdGVCaWxsUGF5U3VjY2VzcygpIHsKICAgICAgY2xvc2VCaWxsTW9kYWwoKTsKICAgICAgc2hvd1RvYXN0KCLgpK3gpYHgpJfgpKTgpL7gpKgg4KS44KSr4KSyISDgpLDgpLjgpYDgpKYg4KS44KSC4KSW4KWN4KSv4KS+OiBSRUMtMjAyNi05OTEyMCDgpIbgpKrgpJXgpYcg4KSq4KSC4KSc4KWA4KSV4KWD4KSkIOCkruCli+CkrOCkvuCkh+CksiDgpKrgpLAg4KSt4KWH4KScIOCkpuClgCDgpJfgpIgg4KS54KWI4KWkIik7CiAgICB9CgogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgLy8gQURNSU4gREFTSEJPQVJEIExPR0lDCiAgICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICBmdW5jdGlvbiByZW5kZXJBZG1pbkRhc2hib2FyZCgpIHsKICAgICAgY29uc3QgYWxsR3JpZXZhbmNlcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfR1JJRVZBTkNFUykgfHwgJ1tdJyk7CiAgICAgIGNvbnN0IGFsbEFwcHMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0FQUExJQ0FUSU9OUykgfHwgJ1tdJyk7CgogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgna3BpVG90YWxDb25ucycpLnRleHRDb250ZW50ID0gYWxsQXBwcy5sZW5ndGg7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdrcGlQZW5kaW5nQXBwcycpLnRleHRDb250ZW50ID0gYWxsQXBwcy5maWx0ZXIoYSA9PiBpc1BlbmRpbmdBcHBsaWNhdGlvbihhKSkubGVuZ3RoOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgna3BpQWN0aXZlQ29tcGxhaW50cycpLnRleHRDb250ZW50ID0gYWxsR3JpZXZhbmNlcy5sZW5ndGg7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1HcmlldmFuY2VCYWRnZScpLnRleHRDb250ZW50ID0gYWxsR3JpZXZhbmNlcy5sZW5ndGg7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1BcHBCYWRnZScpLnRleHRDb250ZW50ID0gYWxsQXBwcy5sZW5ndGg7CgogICAgICByZW5kZXJBZG1pbkdyaWV2YW5jZXMoKTsKICAgICAgcmVuZGVyQWRtaW5BcHBsaWNhdGlvbnMoKTsKICAgIH0KCiAgICBmdW5jdGlvbiByZW5kZXJBZG1pbkdyaWV2YW5jZXMoKSB7CiAgICAgIGNvbnN0IGFsbEdyaWV2YW5jZXMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMpIHx8ICdbXScpOwogICAgICBjb25zdCBmaWx0ZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ3JpZXZhbmNlRmlsdGVyU3RhdHVzJykudmFsdWU7CiAgICAgIGNvbnN0IGZpbHRlcmVkID0gZmlsdGVyID09PSAnQUxMJyA/IGFsbEdyaWV2YW5jZXMgOiBhbGxHcmlldmFuY2VzLmZpbHRlcihnID0+IGcuc3RhdHVzID09PSBmaWx0ZXIpOwoKICAgICAgY29uc3QgdGJvZHkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtaW5HcmlldmFuY2VUYWJsZUJvZHknKTsKICAgICAgaWYgKGZpbHRlcmVkLmxlbmd0aCA9PT0gMCkgewogICAgICAgIHRib2R5LmlubmVySFRNTCA9IGA8dHI+PHRkIGNvbHNwYW49IjciIGNsYXNzPSJwLTYgdGV4dC1jZW50ZXIgdGV4dC1zbGF0ZS00MDAgdGV4dC1zbSI+4KSV4KWL4KSIIOCktuCkv+CkleCkvuCkr+CkpCDgpKjgpLngpYDgpIIg4KSu4KS/4KSy4KWA4KWkPC90ZD48L3RyPmA7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICB0Ym9keS5pbm5lckhUTUwgPSBmaWx0ZXJlZC5tYXAoaXRlbSA9PiBgCiAgICAgICAgPHRyIGNsYXNzPSJob3ZlcjpiZy1zbGF0ZS01MC84MCB0cmFuc2l0aW9uIj4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgZm9udC1tb25vIGZvbnQtYm9sZCB0ZXh0LWphbC03MDAiPiR7aXRlbS5pZH08L3RkPgogICAgICAgICAgPHRkIGNsYXNzPSJwLTMuNSI+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvbnQtYm9sZCB0ZXh0LXNsYXRlLTkwMCI+JHtpdGVtLmNpdGl6ZW5OYW1lfTwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJ0ZXh0LXhzIHRleHQtc2xhdGUtNTAwIj4ke2l0ZW0ubW9iaWxlfTwvZGl2PgogICAgICAgICAgPC90ZD4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgdGV4dC14cyB0ZXh0LXNsYXRlLTcwMCI+JHtpdGVtLnBhbmNoYXlhdH0gKOCkteCkvuCksOCljeCkoSAke2l0ZW0ud2FyZH0pPC90ZD4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgdGV4dC14cyBmb250LW1lZGl1bSB0ZXh0LXNsYXRlLTgwMCI+JHtpdGVtLmNhdGVnb3J5fTwvdGQ+CiAgICAgICAgICA8dGQgY2xhc3M9InAtMy41Ij4KICAgICAgICAgICAgPHNwYW4gY2xhc3M9InRleHQtWzExcHhdIGZvbnQtYm9sZCBweC0yIHB5LTAuNSByb3VuZGVkICR7CiAgICAgICAgICAgICAgaXRlbS5wcmlvcml0eS5pbmNsdWRlcygnVXJnZW50JykgfHwgaXRlbS5wcmlvcml0eS5pbmNsdWRlcygn4KSF4KSk4KS/IOCkl+CkguCkreClgOCksCcpID8gJ2JnLXJvc2UtMTAwIHRleHQtcm9zZS04MDAnIDogJ2JnLXNsYXRlLTEwMCB0ZXh0LXNsYXRlLTcwMCcKICAgICAgICAgICAgfSI+JHtpdGVtLnByaW9yaXR5fTwvc3Bhbj4KICAgICAgICAgIDwvdGQ+CiAgICAgICAgICA8dGQgY2xhc3M9InAtMy41Ij4KICAgICAgICAgICAgPHNwYW4gY2xhc3M9InRleHQtWzExcHhdIGZvbnQtYm9sZCBweC0yLjUgcHktMSByb3VuZGVkLWZ1bGwgJHsKICAgICAgICAgICAgICBpdGVtLnN0YXR1cyA9PT0gJ+CkuOCkruCkvuCkp+CkvuCkqCDgpKrgpYLgpLDgpY3gpKMgKFJlc29sdmVkKScgPyAnYmctZW1lcmFsZC0xMDAgdGV4dC1lbWVyYWxkLTgwMCcgOgogICAgICAgICAgICAgIGl0ZW0uc3RhdHVzID09PSAn4KSV4KS+4KSw4KWN4KSvIOCkquCljeCksOCkl+CkpOCkvyDgpKrgpLAnID8gJ2JnLXNreS0xMDAgdGV4dC1za3ktODAwJyA6CiAgICAgICAgICAgICAgJ2JnLWFtYmVyLTEwMCB0ZXh0LWFtYmVyLTgwMCcKICAgICAgICAgICAgfSI+JHtpdGVtLnN0YXR1c308L3NwYW4+CiAgICAgICAgICA8L3RkPgogICAgICAgICAgPHRkIGNsYXNzPSJwLTMuNSB0ZXh0LXJpZ2h0Ij4KICAgICAgICAgICAgPGJ1dHRvbiBvbmNsaWNrPSJvcGVuQWRtaW5BY3Rpb25Nb2RhbCgnJHtpdGVtLmlkfScpIiBjbGFzcz0icHgtMyBweS0xLjUgYmctamFsLTYwMCBob3ZlcjpiZy1qYWwtNzAwIHRleHQtd2hpdGUgcm91bmRlZC1sZyB0ZXh0LXhzIGZvbnQtYm9sZCB0cmFuc2l0aW9uIHNoYWRvdy1zbSI+CiAgICAgICAgICAgICAg4KSV4KS+4KSw4KWN4KSw4KS14KS+4KSIIC8g4KSF4KSq4KSh4KWH4KSfCiAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgPC90ZD4KICAgICAgICA8L3RyPgogICAgICBgKS5qb2luKCcnKTsKICAgIH0KCiAgICBmdW5jdGlvbiByZW5kZXJBZG1pbkFwcGxpY2F0aW9ucygpIHsKICAgICAgY29uc3QgYWxsQXBwcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TKSB8fCAnW10nKTsKICAgICAgY29uc3QgZmlsdGVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcGxpY2F0aW9uRmlsdGVyU3RhdHVzJyk/LnZhbHVlIHx8ICdBTEwnOwogICAgICBjb25zdCB2aXNpYmxlQXBwcyA9IGZpbHRlciA9PT0gJ1BFTkRJTkcnID8gYWxsQXBwcy5maWx0ZXIoaXNQZW5kaW5nQXBwbGljYXRpb24pIDogZmlsdGVyID09PSAnQVBQUk9WRUQnID8gYWxsQXBwcy5maWx0ZXIoYSA9PiAvYXBwcm92ZWR84KS44KWN4KS14KWA4KSV4KWD4KSkL2kudGVzdChhLnN0YXR1cyB8fCAnJykpIDogZmlsdGVyID09PSAnUkVKRUNURUQnID8gYWxsQXBwcy5maWx0ZXIoYSA9PiAvcmVqZWN0ZWR84KSF4KS44KWN4KS14KWA4KSV4KWD4KSkL2kudGVzdChhLnN0YXR1cyB8fCAnJykpIDogYWxsQXBwczsKICAgICAgY29uc3QgdGJvZHkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtaW5BcHBsaWNhdGlvblRhYmxlQm9keScpOwoKICAgICAgaWYgKHZpc2libGVBcHBzLmxlbmd0aCA9PT0gMCkgewogICAgICAgIHRib2R5LmlubmVySFRNTCA9IGA8dHI+PHRkIGNvbHNwYW49IjciIGNsYXNzPSJwLTYgdGV4dC1jZW50ZXIgdGV4dC1zbGF0ZS00MDAgdGV4dC1zbSI+4KSV4KWL4KSIIOCkhuCkteClh+CkpuCkqCDgpLLgpILgpKzgpL/gpKQg4KSo4KS54KWA4KSC4KWkPC90ZD48L3RyPmA7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICB0Ym9keS5pbm5lckhUTUwgPSB2aXNpYmxlQXBwcy5tYXAoaXRlbSA9PiBgCiAgICAgICAgPHRyIGNsYXNzPSJob3ZlcjpiZy1zbGF0ZS01MC84MCB0cmFuc2l0aW9uIj4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgZm9udC1tb25vIGZvbnQtYm9sZCB0ZXh0LWphbC03MDAiPiR7aXRlbS5pZH08L3RkPgogICAgICAgICAgPHRkIGNsYXNzPSJwLTMuNSI+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvbnQtYm9sZCB0ZXh0LXNsYXRlLTkwMCI+JHtpdGVtLmFwcGxpY2FudE5hbWV9PC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9InRleHQteHMgdGV4dC1zbGF0ZS01MDAiPiR7aXRlbS5tb2JpbGV9PC9kaXY+CiAgICAgICAgICA8L3RkPgogICAgICAgICAgPHRkIGNsYXNzPSJwLTMuNSB0ZXh0LXhzIHRleHQtc2xhdGUtNzAwIj4ke2l0ZW0ucGFuY2hheWF0fSAo4KS14KS+4KSw4KWN4KShICR7aXRlbS53YXJkfSk8L3RkPgogICAgICAgICAgPHRkIGNsYXNzPSJwLTMuNSB0ZXh0LXhzIGZvbnQtbWVkaXVtIHRleHQtc2xhdGUtODAwIj4ke2l0ZW0uY29ubmVjdGlvblR5cGV9PC90ZD4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgdGV4dC14cyB0ZXh0LXNsYXRlLTUwMCI+JHtpdGVtLmRhdGV9PC90ZD4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUiPgogICAgICAgICAgICA8c3BhbiBjbGFzcz0idGV4dC1bMTFweF0gZm9udC1ib2xkIHB4LTIuNSBweS0xIHJvdW5kZWQtZnVsbCAkewogICAgICAgICAgICAgIGl0ZW0uc3RhdHVzLmluY2x1ZGVzKCdBcHByb3ZlZCcpIHx8IGl0ZW0uc3RhdHVzLmluY2x1ZGVzKCfgpLjgpY3gpLXgpYDgpJXgpYPgpKQnKSA/ICdiZy1lbWVyYWxkLTEwMCB0ZXh0LWVtZXJhbGQtODAwJyA6ICdiZy1hbWJlci0xMDAgdGV4dC1hbWJlci04MDAnCiAgICAgICAgICAgIH0iPiR7aXRlbS5zdGF0dXN9PC9zcGFuPgogICAgICAgICAgPC90ZD4KICAgICAgICAgIDx0ZCBjbGFzcz0icC0zLjUgdGV4dC1yaWdodCBzcGFjZS14LTEiPgogICAgICAgICAgICA8YnV0dG9uIG9uY2xpY2s9InZpZXdBcHBsaWNhdGlvbkRldGFpbHMoJyR7aXRlbS5pZH0nKSIgY2xhc3M9InB4LTIuNSBweS0xLjUgYmctc2t5LTYwMCBob3ZlcjpiZy1za3ktNzAwIHRleHQtd2hpdGUgcm91bmRlZC1sZyB0ZXh0LXhzIGZvbnQtYm9sZCB0cmFuc2l0aW9uIG1iLTEiPuCkteCkv+CkteCksOCkoyAvIOCkpuCkuOCljeCkpOCkvuCkteClh+CknOCkvDwvYnV0dG9uPgogICAgICAgICAgICAke2l0ZW0uc3RhdHVzLmluY2x1ZGVzKCdBcHByb3ZlZCcpIHx8IGl0ZW0uc3RhdHVzLmluY2x1ZGVzKCfgpLjgpY3gpLXgpYDgpJXgpYPgpKQnKSA/IGAKICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0idGV4dC14cyB0ZXh0LWVtZXJhbGQtNjAwIGZvbnQtYm9sZCI+PGkgY2xhc3M9ImZhLXNvbGlkIGZhLWNoZWNrIj48L2k+IOCkuOCljeCkteClgOCkleClg+CkpDwvc3Bhbj4KICAgICAgICAgICAgYCA6IGAKICAgICAgICAgICAgICA8YnV0dG9uIG9uY2xpY2s9ImFwcHJvdmVBcHBsaWNhdGlvbignJHtpdGVtLmlkfScpIiBjbGFzcz0icHgtMi41IHB5LTEuNSBiZy1lbWVyYWxkLTYwMCBob3ZlcjpiZy1lbWVyYWxkLTcwMCB0ZXh0LXdoaXRlIHJvdW5kZWQtbGcgdGV4dC14cyBmb250LWJvbGQgdHJhbnNpdGlvbiI+CiAgICAgICAgICAgICAgICDgpLjgpY3gpLXgpYDgpJXgpYPgpKQg4KSV4KSw4KWH4KSCCiAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgPGJ1dHRvbiBvbmNsaWNrPSJyZWplY3RBcHBsaWNhdGlvbignJHtpdGVtLmlkfScpIiBjbGFzcz0icHgtMi41IHB5LTEuNSBiZy1yb3NlLTUwMCBob3ZlcjpiZy1yb3NlLTYwMCB0ZXh0LXdoaXRlIHJvdW5kZWQtbGcgdGV4dC14cyBmb250LWJvbGQgdHJhbnNpdGlvbiI+CiAgICAgICAgICAgICAgICDgpIXgpLjgpY3gpLXgpYDgpJXgpYPgpKQKICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgYH0KICAgICAgICAgIDwvdGQ+CiAgICAgICAgPC90cj4KICAgICAgYCkuam9pbignJyk7CiAgICB9CgogICAgZnVuY3Rpb24gc3dpdGNoQWRtaW5UYWIodGFiKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1UYWJHcmlldmFuY2VzJykuY2xhc3NOYW1lID0gInBiLTMgYm9yZGVyLWItMiBib3JkZXItdHJhbnNwYXJlbnQgdGV4dC1zbGF0ZS01MDAgaG92ZXI6dGV4dC1zbGF0ZS04MDAgZm9udC1ib2xkIHRleHQtc20gd2hpdGVzcGFjZS1ub3dyYXAiOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVGFiQXBwbGljYXRpb25zJykuY2xhc3NOYW1lID0gInBiLTMgYm9yZGVyLWItMiBib3JkZXItdHJhbnNwYXJlbnQgdGV4dC1zbGF0ZS01MDAgaG92ZXI6dGV4dC1zbGF0ZS04MDAgZm9udC1ib2xkIHRleHQtc20gd2hpdGVzcGFjZS1ub3dyYXAiOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVGFiTW9uaXRvcmluZycpLmNsYXNzTmFtZSA9ICJwYi0zIGJvcmRlci1iLTIgYm9yZGVyLXRyYW5zcGFyZW50IHRleHQtc2xhdGUtNTAwIGhvdmVyOnRleHQtc2xhdGUtODAwIGZvbnQtYm9sZCB0ZXh0LXNtIHdoaXRlc3BhY2Utbm93cmFwIjsKCiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1WaWV3R3JpZXZhbmNlcycpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVmlld0FwcGxpY2F0aW9ucycpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVmlld01vbml0b3JpbmcnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKCiAgICAgIGlmICh0YWIgPT09ICdncmlldmFuY2VzJykgewogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1UYWJHcmlldmFuY2VzJykuY2xhc3NOYW1lID0gInBiLTMgYm9yZGVyLWItMiBib3JkZXItamFsLTYwMCB0ZXh0LWphbC03MDAgZm9udC1ib2xkIHRleHQtc20gd2hpdGVzcGFjZS1ub3dyYXAiOwogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1WaWV3R3JpZXZhbmNlcycpLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwogICAgICB9IGVsc2UgaWYgKHRhYiA9PT0gJ2FwcGxpY2F0aW9ucycpIHsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVGFiQXBwbGljYXRpb25zJykuY2xhc3NOYW1lID0gInBiLTMgYm9yZGVyLWItMiBib3JkZXItamFsLTYwMCB0ZXh0LWphbC03MDAgZm9udC1ib2xkIHRleHQtc20gd2hpdGVzcGFjZS1ub3dyYXAiOwogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1WaWV3QXBwbGljYXRpb25zJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICAgIH0gZWxzZSBpZiAodGFiID09PSAnbW9uaXRvcmluZycpIHsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVGFiTW9uaXRvcmluZycpLmNsYXNzTmFtZSA9ICJwYi0zIGJvcmRlci1iLTIgYm9yZGVyLWphbC02MDAgdGV4dC1qYWwtNzAwIGZvbnQtYm9sZCB0ZXh0LXNtIHdoaXRlc3BhY2Utbm93cmFwIjsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVmlld01vbml0b3JpbmcnKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgICAgfQogICAgfQoKICAgIGxldCBzZWxlY3RlZFRpY2tldElkRm9yQWRtaW4gPSBudWxsOwogICAgZnVuY3Rpb24gb3BlbkFkbWluQWN0aW9uTW9kYWwodGlja2V0SWQpIHsKICAgICAgc2VsZWN0ZWRUaWNrZXRJZEZvckFkbWluID0gdGlja2V0SWQ7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhY3Rpb25UaWNrZXRJZCcpLnRleHRDb250ZW50ID0gdGlja2V0SWQ7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1pbkFjdGlvbk1vZGFsJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VBZG1pbkFjdGlvbk1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtaW5BY3Rpb25Nb2RhbCcpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICBzZWxlY3RlZFRpY2tldElkRm9yQWRtaW4gPSBudWxsOwogICAgfQoKICAgIGZ1bmN0aW9uIHNhdmVBZG1pbkdyaWV2YW5jZUFjdGlvbigpIHsKICAgICAgaWYgKCFzZWxlY3RlZFRpY2tldElkRm9yQWRtaW4pIHJldHVybjsKICAgICAgY29uc3QgbmV3U3RhdHVzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FjdGlvbk5ld1N0YXR1cycpLnZhbHVlOwogICAgICBjb25zdCBhc3NpZ25lZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhY3Rpb25Bc3NpZ25TdGFmZicpLnZhbHVlOwogICAgICBjb25zdCByZW1hcmtzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FjdGlvblJlbWFya3MnKS52YWx1ZS50cmltKCk7CgogICAgICBjb25zdCBhbGxHcmlldmFuY2VzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9HUklFVkFOQ0VTKSB8fCAnW10nKTsKICAgICAgY29uc3QgaW5kZXggPSBhbGxHcmlldmFuY2VzLmZpbmRJbmRleChnID0+IGcuaWQgPT09IHNlbGVjdGVkVGlja2V0SWRGb3JBZG1pbik7CgogICAgICBpZiAoaW5kZXggIT09IC0xKSB7CiAgICAgICAgYWxsR3JpZXZhbmNlc1tpbmRleF0uc3RhdHVzID0gbmV3U3RhdHVzOwogICAgICAgIGFsbEdyaWV2YW5jZXNbaW5kZXhdLmFzc2lnbmVkVG8gPSBhc3NpZ25lZDsKICAgICAgICBpZiAocmVtYXJrcykgYWxsR3JpZXZhbmNlc1tpbmRleF0ucmVtYXJrcyA9IHJlbWFya3M7CgogICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMsIEpTT04uc3RyaW5naWZ5KGFsbEdyaWV2YW5jZXMpKTsKICAgICAgICBjbG9zZUFkbWluQWN0aW9uTW9kYWwoKTsKICAgICAgICBzaG93VG9hc3QoYOCkn+Ckv+CkleCknyAke3NlbGVjdGVkVGlja2V0SWRGb3JBZG1pbn0g4KS44KSr4KSy4KSk4KS+4KSq4KWC4KSw4KWN4KS14KSVIOCkheCkquCkoeClh+CknyDgpJXgpL/gpK/gpL4g4KSX4KSv4KS+IWApOwogICAgICAgIHJlbmRlckFkbWluRGFzaGJvYXJkKCk7CiAgICAgICAgaWYgKGN1cnJlbnRVc2VyICYmIGN1cnJlbnRVc2VyLnJvbGUgPT09ICdjaXRpemVuJykgewogICAgICAgICAgcmVuZGVyQ2l0aXplbkRhc2hib2FyZCgpOwogICAgICAgIH0KICAgICAgfQogICAgfQoKICAgIGZ1bmN0aW9uIGFwcHJvdmVBcHBsaWNhdGlvbihhcHBJZCkgewogICAgICBjb25zdCBhbGxBcHBzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMpIHx8ICdbXScpOwogICAgICBjb25zdCBpbmRleCA9IGFsbEFwcHMuZmluZEluZGV4KGEgPT4gYS5pZCA9PT0gYXBwSWQpOwogICAgICBpZiAoaW5kZXggIT09IC0xKSB7CiAgICAgICAgYWxsQXBwc1tpbmRleF0uc3RhdHVzID0gJ+CkuOCljeCkteClgOCkleClg+CkpCAoQXBwcm92ZWQgLSDgpKrgpL7gpIfgpKrgpLLgpL7gpIfgpKgg4KSV4KSo4KWH4KSV4KWN4KS24KSoIOCkheCkqOClgeCkruCkpCknOwogICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0FQUExJQ0FUSU9OUywgSlNPTi5zdHJpbmdpZnkoYWxsQXBwcykpOwogICAgICAgIHNob3dUb2FzdChg4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkviAke2FwcElkfSDgpLjgpY3gpLXgpYDgpJXgpYPgpKQg4KSV4KS/4KSv4KS+IOCkl+Ckr+CkviFgKTsKICAgICAgICByZW5kZXJBZG1pbkRhc2hib2FyZCgpOwogICAgICAgIGlmIChjdXJyZW50VXNlciAmJiBjdXJyZW50VXNlci5yb2xlID09PSAnY2l0aXplbicpIHsKICAgICAgICAgIHJlbmRlckNpdGl6ZW5EYXNoYm9hcmQoKTsKICAgICAgICB9CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiByZWplY3RBcHBsaWNhdGlvbihhcHBJZCkgewogICAgICBjb25zdCBhbGxBcHBzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMpIHx8ICdbXScpOwogICAgICBjb25zdCBpbmRleCA9IGFsbEFwcHMuZmluZEluZGV4KGEgPT4gYS5pZCA9PT0gYXBwSWQpOwogICAgICBpZiAoaW5kZXggIT09IC0xKSB7CiAgICAgICAgYWxsQXBwc1tpbmRleF0uc3RhdHVzID0gJ+CkheCkuOCljeCkteClgOCkleClg+CkpCAo4KSV4KS+4KSX4KSc4KS+4KSkIOCkheCkquClguCksOCljeCkoyknOwogICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFNUT1JBR0VfS0VZX0FQUExJQ0FUSU9OUywgSlNPTi5zdHJpbmdpZnkoYWxsQXBwcykpOwogICAgICAgIHNob3dUb2FzdChg4KSG4KS14KWH4KSm4KSoIOCkuOCkguCkluCljeCkr+CkviAke2FwcElkfSDgpIXgpLjgpY3gpLXgpYDgpJXgpYPgpKQg4KSV4KS/4KSv4KS+IOCkl+Ckr+CkvuClpGAsIGZhbHNlKTsKICAgICAgICByZW5kZXJBZG1pbkRhc2hib2FyZCgpOwogICAgICB9CiAgICB9CgogICAgZnVuY3Rpb24gb3BlbkJyb2FkY2FzdE1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnJvYWRjYXN0TW9kYWwnKS5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgIH0KCiAgICBmdW5jdGlvbiBjbG9zZUJyb2FkY2FzdE1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnJvYWRjYXN0TW9kYWwnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgIH0KCiAgICBmdW5jdGlvbiBwdWJsaXNoQnJvYWRjYXN0QWxlcnQoKSB7CiAgICAgIGNvbnN0IHRpdGxlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JjVGl0bGUnKS52YWx1ZS50cmltKCk7CiAgICAgIGNvbnN0IGJvZHkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmNCb2R5JykudmFsdWUudHJpbSgpOwogICAgICBpZiAoIXRpdGxlIHx8ICFib2R5KSB7CiAgICAgICAgc2hvd1RvYXN0KCLgpJXgpYPgpKrgpK/gpL4g4KS24KWA4KSw4KWN4KS34KSVIOCklOCksCDgpLjgpILgpKbgpYfgpLYg4KSm4KWL4KSo4KWL4KSCIOCkpuCksOCljeCknCDgpJXgpLDgpYfgpIIhIiwgZmFsc2UpOwogICAgICAgIHJldHVybjsKICAgICAgfQogICAgICBjb25zdCBub3RpY2UgPSB7IGlkOiAnTk9USUNFLScgKyBEYXRlLm5vdygpLCB0aXRsZSwgYm9keSwgZGF0ZTogbmV3IERhdGUoKS50b0xvY2FsZVN0cmluZygnaGktSU4nKSB9OwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgnbmp5X3B1YmxpY19ub3RpY2VfdjEnLCBKU09OLnN0cmluZ2lmeShub3RpY2UpKTsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JjVGl0bGUnKS52YWx1ZSA9ICcnOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmNCb2R5JykudmFsdWUgPSAnJzsKICAgICAgY2xvc2VCcm9hZGNhc3RNb2RhbCgpOwogICAgICBzaG93VG9hc3QoJ+CkqOCkvuCkl+CksOCkv+CklSDgpLjgpYLgpJrgpKjgpL4g4KSq4KWN4KSw4KSV4KS+4KS24KS/4KSkIOCkueCliyDgpJfgpIgg4KS54KWI4KWkJyk7CiAgICAgIHNob3dQdWJsaWNOb3RpY2VJZk5lZWRlZCh0cnVlKTsKICAgIH0KCiAgICBmdW5jdGlvbiBzaG93UHVibGljTm90aWNlSWZOZWVkZWQoZm9yY2UpIHsKICAgICAgY29uc3QgcmF3ID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oJ25qeV9wdWJsaWNfbm90aWNlX3YxJyk7CiAgICAgIGNvbnN0IG1vZGFsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3B1YmxpY05vdGljZU1vZGFsJyk7CiAgICAgIGlmICghcmF3IHx8ICFtb2RhbCkgcmV0dXJuOwogICAgICBsZXQgbm90aWNlOyB0cnkgeyBub3RpY2UgPSBKU09OLnBhcnNlKHJhdyk7IH0gY2F0Y2ggKF8pIHsgcmV0dXJuOyB9CiAgICAgIGNvbnN0IGRpc21pc3NlZCA9IHNlc3Npb25TdG9yYWdlLmdldEl0ZW0oJ25qeV9ub3RpY2VfZGlzbWlzc2VkXycgKyBub3RpY2UuaWQpOwogICAgICBpZiAoZGlzbWlzc2VkICYmICFmb3JjZSkgcmV0dXJuOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHVibGljTm90aWNlVGl0bGUnKS50ZXh0Q29udGVudCA9IG5vdGljZS50aXRsZSB8fCAn4KSo4KS+4KSX4KSw4KS/4KSVIOCkuOClguCkmuCkqOCkvic7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwdWJsaWNOb3RpY2VCb2R5JykudGV4dENvbnRlbnQgPSBub3RpY2UuYm9keSB8fCAnJzsKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3B1YmxpY05vdGljZURhdGUnKS50ZXh0Q29udGVudCA9IG5vdGljZS5kYXRlIHx8ICcnOwogICAgICBtb2RhbC5jbGFzc0xpc3QucmVtb3ZlKCdoaWRkZW4nKTsKICAgIH0KICAgIGZ1bmN0aW9uIGNsb3NlUHVibGljTm90aWNlKCkgewogICAgICBjb25zdCByYXcgPSBsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnbmp5X3B1YmxpY19ub3RpY2VfdjEnKTsKICAgICAgaWYgKHJhdykgeyB0cnkgeyBjb25zdCBuID0gSlNPTi5wYXJzZShyYXcpOyBzZXNzaW9uU3RvcmFnZS5zZXRJdGVtKCduanlfbm90aWNlX2Rpc21pc3NlZF8nICsgbi5pZCwgJzEnKTsgfSBjYXRjaCAoXykge30gfQogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHVibGljTm90aWNlTW9kYWwnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgIH0KICAgIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdzdG9yYWdlJywgKGV2ZW50KSA9PiB7CiAgICAgIGlmIChldmVudC5rZXkgPT09ICduanlfcHVibGljX25vdGljZV92MScpIHNob3dQdWJsaWNOb3RpY2VJZk5lZWRlZChmYWxzZSk7CiAgICB9KTsKCiAgICBmdW5jdGlvbiBpc1BlbmRpbmdBcHBsaWNhdGlvbihpdGVtKSB7CiAgICAgIGNvbnN0IHMgPSBTdHJpbmcoaXRlbS5zdGF0dXMgfHwgJycpLnRvTG93ZXJDYXNlKCk7CiAgICAgIHJldHVybiBzLmluY2x1ZGVzKCdwZW5kaW5nJykgfHwgcy5pbmNsdWRlcygn4KSy4KSC4KSs4KS/4KSkJykgfHwgcy5pbmNsdWRlcygn4KSq4KWN4KSw4KSk4KWA4KSV4KWN4KS34KS+4KSw4KSkJykgfHwgcy5pbmNsdWRlcygnc3VibWl0dGVkJykgfHwgcy5pbmNsdWRlcygn4KSm4KSw4KWN4KScJyk7CiAgICB9CiAgICBmdW5jdGlvbiBvcGVuQXBwbGljYXRpb25zRnJvbUtwaShwZW5kaW5nT25seSA9IGZhbHNlKSB7CiAgICAgIHN3aXRjaEFkbWluVGFiKCdhcHBsaWNhdGlvbnMnKTsKICAgICAgY29uc3QgZmlsdGVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcGxpY2F0aW9uRmlsdGVyU3RhdHVzJyk7CiAgICAgIGlmIChmaWx0ZXIpIGZpbHRlci52YWx1ZSA9IHBlbmRpbmdPbmx5ID8gJ1BFTkRJTkcnIDogJ0FMTCc7CiAgICAgIHJlbmRlckFkbWluQXBwbGljYXRpb25zKCk7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1WaWV3QXBwbGljYXRpb25zJykuc2Nyb2xsSW50b1ZpZXcoe2JlaGF2aW9yOidzbW9vdGgnLCBibG9jazonc3RhcnQnfSk7CiAgICB9CiAgICBmdW5jdGlvbiBvcGVuR3JpZXZhbmNlc0Zyb21LcGkoKSB7CiAgICAgIHN3aXRjaEFkbWluVGFiKCdncmlldmFuY2VzJyk7CiAgICAgIGNvbnN0IGZpbHRlciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncmlldmFuY2VGaWx0ZXJTdGF0dXMnKTsKICAgICAgaWYgKGZpbHRlcikgZmlsdGVyLnZhbHVlID0gJ0FMTCc7CiAgICAgIHJlbmRlckFkbWluR3JpZXZhbmNlcygpOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYWRtVmlld0dyaWV2YW5jZXMnKS5zY3JvbGxJbnRvVmlldyh7YmVoYXZpb3I6J3Ntb290aCcsIGJsb2NrOidzdGFydCd9KTsKICAgIH0KICAgIGZ1bmN0aW9uIGNzdkNlbGwodmFsdWUpIHsgcmV0dXJuICciJyArIFN0cmluZyh2YWx1ZSA9PSBudWxsID8gJycgOiB2YWx1ZSkucmVwbGFjZSgvIi9nLCAnIiInKSArICciJzsgfQogICAgZnVuY3Rpb24gZG93bmxvYWRDc3YoZmlsZW5hbWUsIHJvd3MpIHsKICAgICAgaWYgKCFyb3dzLmxlbmd0aCkgeyBzaG93VG9hc3QoJ+CkoeCkvuCkieCkqOCksuCli+CkoSDgpJXgpYcg4KSy4KS/4KSPIOCkleCli+CkiCDgpLDgpL/gpJXgpYngpLDgpY3gpKEg4KSo4KS54KWA4KSCIOCkueCliOClpCcsIGZhbHNlKTsgcmV0dXJuOyB9CiAgICAgIGNvbnN0IGNzdiA9ICdcdUZFRkYnICsgcm93cy5tYXAocm93ID0+IHJvdy5tYXAoY3N2Q2VsbCkuam9pbignLCcpKS5qb2luKCdcclxuJyk7CiAgICAgIGNvbnN0IGJsb2IgPSBuZXcgQmxvYihbY3N2XSwge3R5cGU6J3RleHQvY3N2O2NoYXJzZXQ9dXRmLTg7J30pOwogICAgICBjb25zdCB1cmwgPSBVUkwuY3JlYXRlT2JqZWN0VVJMKGJsb2IpOyBjb25zdCBhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYScpOwogICAgICBhLmhyZWYgPSB1cmw7IGEuZG93bmxvYWQgPSBmaWxlbmFtZTsgZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZChhKTsgYS5jbGljaygpOyBhLnJlbW92ZSgpOyBVUkwucmV2b2tlT2JqZWN0VVJMKHVybCk7CiAgICB9CiAgICBmdW5jdGlvbiBleHBvcnRBcHBsaWNhdGlvbnNDc3YoKSB7CiAgICAgIGNvbnN0IGFsbCA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfQVBQTElDQVRJT05TKSB8fCAnW10nKTsKICAgICAgY29uc3QgZiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhcHBsaWNhdGlvbkZpbHRlclN0YXR1cycpPy52YWx1ZSB8fCAnQUxMJzsKICAgICAgY29uc3QgaXRlbXMgPSBmID09PSAnUEVORElORycgPyBhbGwuZmlsdGVyKGlzUGVuZGluZ0FwcGxpY2F0aW9uKSA6IGYgPT09ICdBUFBST1ZFRCcgPyBhbGwuZmlsdGVyKGEgPT4gL2FwcHJvdmVkfOCkuOCljeCkteClgOCkleClg+CkpC9pLnRlc3QoYS5zdGF0dXMgfHwgJycpKSA6IGYgPT09ICdSRUpFQ1RFRCcgPyBhbGwuZmlsdGVyKGEgPT4gL3JlamVjdGVkfOCkheCkuOCljeCkteClgOCkleClg+CkpC9pLnRlc3QoYS5zdGF0dXMgfHwgJycpKSA6IGFsbDsKICAgICAgZG93bmxvYWRDc3YoJ25hbC1qYWwtYXBwbGljYXRpb25zLmNzdicsIFtbJ0FwcGxpY2F0aW9uIElEJywnTmFtZScsJ0ZhdGhlciBOYW1lJywnTW9iaWxlJywnUGFuY2hheWF0JywnV2FyZCcsJ0Nvbm5lY3Rpb24gVHlwZScsJ0RhdGUnLCdTdGF0dXMnXSwgLi4uaXRlbXMubWFwKGEgPT4gW2EuaWQsYS5hcHBsaWNhbnROYW1lIHx8IGEubmFtZSxhLmZhdGhlck5hbWUsYS5tb2JpbGUsYS5wYW5jaGF5YXQsYS53YXJkLGEuY29ubmVjdGlvblR5cGUsYS5kYXRlLGEuc3RhdHVzXSldKTsKICAgIH0KICAgIGZ1bmN0aW9uIGV4cG9ydEdyaWV2YW5jZXNDc3YoKSB7CiAgICAgIGNvbnN0IGFsbCA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVlfR1JJRVZBTkNFUykgfHwgJ1tdJyk7CiAgICAgIGNvbnN0IGYgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ3JpZXZhbmNlRmlsdGVyU3RhdHVzJyk/LnZhbHVlIHx8ICdBTEwnOwogICAgICBjb25zdCBpdGVtcyA9IGYgPT09ICdBTEwnID8gYWxsIDogYWxsLmZpbHRlcihnID0+IGcuc3RhdHVzID09PSBmKTsKICAgICAgZG93bmxvYWRDc3YoJ25hbC1qYWwtZ3JpZXZhbmNlcy5jc3YnLCBbWydUaWNrZXQgSUQnLCdDaXRpemVuIE5hbWUnLCdGYXRoZXIgTmFtZScsJ01vYmlsZScsJ1BhbmNoYXlhdCcsJ1dhcmQnLCdDYXRlZ29yeScsJ0xvY2F0aW9uJywnRGVzY3JpcHRpb24nLCdQcmlvcml0eScsJ1N0YXR1cycsJ0Fzc2lnbmVkIFRvJywnUmVtYXJrcyddLCAuLi5pdGVtcy5tYXAoZyA9PiBbZy5pZCxnLmNpdGl6ZW5OYW1lLGcuY2l0aXplbkRldGFpbHM/LmZhdGhlck5hbWUsZy5tb2JpbGUsZy5wYW5jaGF5YXQsZy53YXJkLGcuY2F0ZWdvcnksZy5sb2NhdGlvbixnLmRlc2NyaXB0aW9uLGcucHJpb3JpdHksZy5zdGF0dXMsZy5hc3NpZ25lZFRvLGcucmVtYXJrc10pXSk7CiAgICB9CiAgICBmdW5jdGlvbiBleHBvcnREYXRhUmVwb3J0KCkgewogICAgICBjb25zdCBhcHBzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMpIHx8ICdbXScpOwogICAgICBjb25zdCBncmlldmFuY2VzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9HUklFVkFOQ0VTKSB8fCAnW10nKTsKICAgICAgY29uc3Qgcm93cyA9IFtbJ1JlY29yZCBUeXBlJywnQXBwbGljYXRpb24vVGlja2V0IElEJywnTmFtZScsJ0ZhdGhlciBOYW1lJywnTW9iaWxlJywnUGFuY2hheWF0JywnV2FyZCcsJ0NhdGVnb3J5L0Nvbm5lY3Rpb24nLCdEYXRlJywnUHJpb3JpdHknLCdTdGF0dXMnLCdEZXRhaWxzJ11dOwogICAgICBhcHBzLmZvckVhY2goYSA9PiByb3dzLnB1c2goWydBcHBsaWNhdGlvbicsYS5pZCxhLmFwcGxpY2FudE5hbWUgfHwgYS5uYW1lLGEuZmF0aGVyTmFtZSxhLm1vYmlsZSxhLnBhbmNoYXlhdCxhLndhcmQsYS5jb25uZWN0aW9uVHlwZSxhLmRhdGUsJycsYS5zdGF0dXMsYS5hZGRyZXNzIHx8ICcnXSkpOwogICAgICBncmlldmFuY2VzLmZvckVhY2goZyA9PiByb3dzLnB1c2goWydHcmlldmFuY2UnLGcuaWQsZy5jaXRpemVuTmFtZSxnLmNpdGl6ZW5EZXRhaWxzPy5mYXRoZXJOYW1lLGcubW9iaWxlLGcucGFuY2hheWF0LGcud2FyZCxnLmNhdGVnb3J5LGcuZGF0ZSxnLnByaW9yaXR5LGcuc3RhdHVzLGcuZGVzY3JpcHRpb24gfHwgZy5sb2NhdGlvbiB8fCAnJ10pKTsKICAgICAgZG93bmxvYWRDc3YoJ25hbC1qYWwtY29tcGxldGUtcmVwb3J0LmNzdicsIHJvd3MpOwogICAgfQoKICAgIC8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgIC8vIFRSQUNLSU5HIE1PREFMIEVOR0lORQogICAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogICAgZnVuY3Rpb24gb3BlbkNvbXBsYWludFRyYWNraW5nTW9kYWwoKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFja01vZGFsJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VUcmFja01vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHJhY2tNb2RhbCcpLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgfQoKICAgIGZ1bmN0aW9uIHNlYXJjaFRpY2tldFRyYWNrKCkgewogICAgICBjb25zdCBxdWVyeSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFja1NlYXJjaElucHV0JykudmFsdWUudHJpbSgpLnRvVXBwZXJDYXNlKCk7CiAgICAgIGNvbnN0IGJveCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFja1Jlc3VsdEJveCcpOwoKICAgICAgaWYgKCFxdWVyeSkgewogICAgICAgIGJveC5pbm5lckhUTUwgPSBgPGRpdiBjbGFzcz0idGV4dC1jZW50ZXIgdGV4dC1yb3NlLTUwMCB0ZXh0LXhzIHB5LTIiPuCkleClg+CkquCkr+CkviDgpLXgpYjgpKcg4KSf4KS/4KSV4KSfIOCkuOCkguCkluCljeCkr+CkviDgpKbgpLDgpY3gpJwg4KSV4KSw4KWH4KSC4KWkPC9kaXY+YDsKICAgICAgICByZXR1cm47CiAgICAgIH0KCiAgICAgIGNvbnN0IGdyaWV2YW5jZXMgPSBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFNUT1JBR0VfS0VZX0dSSUVWQU5DRVMpIHx8ICdbXScpOwogICAgICBjb25zdCBhcHBzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWV9BUFBMSUNBVElPTlMpIHx8ICdbXScpOwoKICAgICAgY29uc3QgZm91bmRHID0gZ3JpZXZhbmNlcy5maW5kKGcgPT4gZy5pZC50b1VwcGVyQ2FzZSgpID09PSBxdWVyeSk7CiAgICAgIGNvbnN0IGZvdW5kQSA9IGFwcHMuZmluZChhID0+IGEuaWQudG9VcHBlckNhc2UoKSA9PT0gcXVlcnkpOwoKICAgICAgaWYgKGZvdW5kRykgewogICAgICAgIGJveC5pbm5lckhUTUwgPSBgCiAgICAgICAgICA8ZGl2IGNsYXNzPSJzcGFjZS15LTMiPgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJmbGV4IGp1c3RpZnktYmV0d2VlbiBpdGVtcy1jZW50ZXIgcGItMiBib3JkZXItYiBib3JkZXItc2xhdGUtMjAwIj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0iZm9udC1tb25vIGZvbnQtYm9sZCB0ZXh0LWphbC03MDAiPiR7Zm91bmRHLmlkfTwvc3Bhbj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0icHgtMi41IHB5LTAuNSByb3VuZGVkLWZ1bGwgdGV4dC14cyBmb250LWJvbGQgYmctYW1iZXItMTAwIHRleHQtYW1iZXItODAwIj4ke2ZvdW5kRy5zdGF0dXN9PC9zcGFuPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzcz0idGV4dC14cyBzcGFjZS15LTEgdGV4dC1zbGF0ZS03MDAiPgogICAgICAgICAgICAgIDxkaXY+PGI+4KS24KS/4KSV4KS+4KSv4KSk4KSV4KSw4KWN4KSk4KS+OjwvYj4gJHtmb3VuZEcuY2l0aXplbk5hbWV9PC9kaXY+CiAgICAgICAgICAgICAgPGRpdj48Yj7gpLbgpY3gpLDgpYfgpKPgpYA6PC9iPiAke2ZvdW5kRy5jYXRlZ29yeX08L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PjxiPuCkuOCljeCkpeCkvuCkqDo8L2I+ICR7Zm91bmRHLmxvY2F0aW9ufSAoJHtmb3VuZEcucGFuY2hheWF0fSk8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PjxiPuCkuOCljOCkguCkquCkviDgpJfgpK/gpL4g4KS44KWN4KSf4KS+4KSrOjwvYj4gJHtmb3VuZEcuYXNzaWduZWRUb308L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PjxiPuCkn+Ckv+CkquCljeCkquCko+ClgDo8L2I+ICR7Zm91bmRHLnJlbWFya3MgfHwgJ+CkleCkvuCksOCljeCkr+CkteCkvuCkueClgCDgpJzgpL7gpLDgpYAg4KS54KWI4KWkJ308L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICBgOwogICAgICB9IGVsc2UgaWYgKGZvdW5kQSkgewogICAgICAgIGJveC5pbm5lckhUTUwgPSBgCiAgICAgICAgICA8ZGl2IGNsYXNzPSJzcGFjZS15LTMiPgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJmbGV4IGp1c3RpZnktYmV0d2VlbiBpdGVtcy1jZW50ZXIgcGItMiBib3JkZXItYiBib3JkZXItc2xhdGUtMjAwIj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0iZm9udC1tb25vIGZvbnQtYm9sZCB0ZXh0LWphbC03MDAiPiR7Zm91bmRBLmlkfTwvc3Bhbj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0icHgtMi41IHB5LTAuNSByb3VuZGVkLWZ1bGwgdGV4dC14cyBmb250LWJvbGQgYmctZW1lcmFsZC0xMDAgdGV4dC1lbWVyYWxkLTgwMCI+JHtmb3VuZEEuc3RhdHVzfTwvc3Bhbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9InRleHQteHMgc3BhY2UteS0xIHRleHQtc2xhdGUtNzAwIj4KICAgICAgICAgICAgICA8ZGl2PjxiPuCkhuCkteClh+CkpuCklTo8L2I+ICR7Zm91bmRBLmFwcGxpY2FudE5hbWV9PC9kaXY+CiAgICAgICAgICAgICAgPGRpdj48Yj7gpJXgpKjgpYfgpJXgpY3gpLbgpKgg4KSq4KWN4KSw4KSV4KS+4KSwOjwvYj4gJHtmb3VuZEEuY29ubmVjdGlvblR5cGV9PC9kaXY+CiAgICAgICAgICAgICAgPGRpdj48Yj7gpJfgpY3gpLDgpL7gpK4g4KSq4KSC4KSa4KS+4KSv4KSkOjwvYj4gJHtmb3VuZEEucGFuY2hheWF0fSAo4KS14KS+4KSw4KWN4KShICR7Zm91bmRBLndhcmR9KTwvZGl2PgogICAgICAgICAgICAgIDxkaXY+PGI+4KSG4KS14KWH4KSm4KSoIOCkpOCkv+CkpeCkvzo8L2I+ICR7Zm91bmRBLmRhdGV9PC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgYDsKICAgICAgfSBlbHNlIHsKICAgICAgICBib3guaW5uZXJIVE1MID0gYAogICAgICAgICAgPGRpdiBjbGFzcz0idGV4dC1jZW50ZXIgdGV4dC1zbGF0ZS01MDAgdGV4dC14cyBweS00Ij4KICAgICAgICAgICAgPGkgY2xhc3M9ImZhLXNvbGlkIGZhLWNpcmNsZS1leGNsYW1hdGlvbiB0ZXh0LWFtYmVyLTUwMCB0ZXh0LXhsIG1iLTIiPjwvaT4KICAgICAgICAgICAgPHA+4KSV4KWL4KSIIOCksOCkv+CkleClieCksOCljeCkoSDgpKjgpLngpYDgpIIg4KSu4KS/4KSy4KS+ISDgpJXgpYPgpKrgpK/gpL4g4KSf4KS/4KSV4KSfIOCkuOCkguCkluCljeCkr+CkviDgpJzgpL7gpILgpJog4KSy4KWH4KSCICjgpIngpKbgpL4uIFRLVC03NzAxIOCkr+CkviBOSi1BUFAtMTAxKeClpDwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgIGA7CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBzaG93SGVscE1vZGFsKCkgewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaGVscE1vZGFsJykuY2xhc3NMaXN0LnJlbW92ZSgnaGlkZGVuJyk7CiAgICB9CgogICAgZnVuY3Rpb24gY2xvc2VIZWxwTW9kYWwoKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdoZWxwTW9kYWwnKS5jbGFzc0xpc3QuYWRkKCdoaWRkZW4nKTsKICAgIH0K";
+      const bytes = Uint8Array.from(atob(encodedApp), c => c.charCodeAt(0));
+      const appCode = new TextDecoder('utf-8').decode(bytes);
+      const appScript = document.createElement('script');
+      appScript.textContent = appCode;
+      document.body.appendChild(appScript);
+    })();
+  </script>
+</body>
+</html>
